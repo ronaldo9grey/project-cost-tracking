@@ -1,0 +1,234 @@
+# =========================
+# 通用文件
+# =========================
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+*~
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# =========================
+# Virtual Environment
+# =========================
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# =========================
+# Node.js
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# =========================
+# Frontend Build
+# =========================
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# =========================
+# Database
+# =========================
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# =========================
+# Testing
+# =========================
+.coverage
+.pytest_cache/
+.tox/
+htmlcov/
+
+# =========================
+# Uploads (if any)
+# =========================
+uploads/
+static/uploads/
+
+# =========================
+# Backup files
+# =========================
+*.bak
+*.backup
+*.old
+*.orig
+*.rej
+
+# =========================
+# Temporary files
+# =========================
+.cache/
+.temp/
+tmp/
+temp/
+
+# =========================
+# Docker
+# =========================
+.docker/
+
+# =========================
+# OS generated files
+# =========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# =========================
+# 项目特定文件
+# =========================
+*.spec
+*.exe
+*.zip
+*.7z
+*.rar
+*.tar.gz
+*.bak
+*.swp
+*~
+.coverage
+*.log
+
+# =========================
+# 后端临时文件和调试文件
+# =========================
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.db
+*.db-journal
+.env
+.env.backup
+__pycache__/
+.pytest_cache/
+.tox/
+.coverage
+htmlcov/
+.cache/
+*.egg-info/
+.eggs/
+build/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# =========================
+# 前端临时文件
+# =========================
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+frontend/.nyc_output/
+frontend/coverage/lcov.info
+frontend/dist-ssr/
+
+# =========================
+# 上传文件和用户生成内容
+# =========================
+uploads/daily_reports/
+uploads/*.sql
+uploads/*.xlsx
+uploads/*.png
+uploads/*.jpg
+uploads/*.jpeg
+uploads/*.pdf
+
+# =========================
+# 调试和测试文件
+# =========================
+debug_*.py
+test_*.py
+check_*.py
+fix_*.py
+analyze_*.py
+create_*.py
+quick_*.py
+simple_*.py
+final_*.py
+complete_*.py
+inspect_*.py
+diagnostic_*.py
+*.sql

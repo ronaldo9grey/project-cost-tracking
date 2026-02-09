@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Token发送测试</title>
+</head>
+<body>
+    <h1>Token发送验证测试</h1>
+    <button onclick="testTokenSending()">测试Token发送</button>
+    <div id="results"></div>
+
+    <script>
+        async function testTokenSending() {
+            const results = document.getElementById('results');
+            results.innerHTML = '测试开始...<br>';
+            
+            try {
+                // 1. 清理存储
+                localStorage.removeItem('token');
+                localStorage.removeItem('currentUser');
+                results.innerHTML += '1. 清理本地存储完成<br>';
+                
+                // 2. 登录
+                results.innerHTML += '2. 开始登录...<br>';
+                
+                const formData = new URLSearchParams();
+                formData.append('username', 'admin');
+                formData.append('password', '123456');
+                
+                const loginResponse = await fetch('/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formData
+                });
+                
+                results.innerHTML += `登录状态: ${loginResponse.status}<br>`;
+                
+                if (loginResponse.ok) {
+                    const loginData = await loginResponse.json();
+                    results.innerHTML += `登录响应: ${JSON.stringify(loginData)}<br>`;
+                    
+                    if (loginData.code === 200 && loginData.data?.access_token) {
+                        const token = loginData.data.access_token;
+                        localStorage.setItem('token', token);
+                        results.innerHTML += `Token保存: ${token.substring(0, 20)}...<br>`;
+                        
+                        // 3. 测试发送token的请求
+                        results.innerHTML += '3. 测试发送token的请求...<br>';
+                        
+                        const testResponse = await fetch('/api/v1/daily-report/legacy/my-reports', {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        results.innerHTML += `测试请求状态: ${testResponse.status}<br>`;
+                        
+                        if (testResponse.ok) {
+                            const testData = await testResponse.json();
+                            results.innerHTML += `测试请求成功: 找到 ${testData.total || 0} 条日报<br>`;
+                        } else {
+                            const errorText = await testResponse.text();
+                            results.innerHTML += `测试请求失败: ${testResponse.status} - ${errorText}<br>`;
+                        }
+                        
+                    } else {
+                        results.innerHTML += '❌ 登录响应格式错误<br>';
+                    }
+                } else {
+                    const errorText = await loginResponse.text();
+                    results.innerHTML += `❌ 登录失败: ${loginResponse.status} - ${errorText}<br>`;
+                }
+                
+            } catch (error) {
+                results.innerHTML += `❌ 测试出错: ${error.message}<br>`;
+            }
+        }
+    </script>
+</body>
+</html>
