@@ -361,13 +361,13 @@ def get_task_completion_analysis(
     # 获取状态统计
     status_query = db.query(
         DailyWorkItem.progress_status,
-        func.count(DailyWorkItem.id)
+        func.count(DailyWorkItem.id).label('count')
     ).filter(*query_conditions).group_by(DailyWorkItem.progress_status)
     
     results = status_query.all()
     
     # 统计各状态的任务数量
-    status_counts = {result.progress_status: result.count for result in results}
+    status_counts = {result.progress_status: int(result.count) for result in results}
     
     total_tasks = sum(status_counts.values())
     completed_tasks = status_counts.get('已完成', 0)
@@ -446,7 +446,7 @@ def get_evaluation_analysis(
     score_distribution = {}
     for score_result in score_results:
         score = score_result.supervisor_score
-        count = score_result.count
+        count = int(score_result.count) if hasattr(score_result, 'count') else 0
         score_distribution[f"score_{score}"] = count
     
     # 获取主管评价排名
@@ -497,7 +497,7 @@ def get_evaluation_analysis(
     high_quality_count = 0
     for score_result in score_results:
         if score_result.supervisor_score >= 4:
-            high_quality_count += score_result.count
+            high_quality_count += int(score_result.count)
     
     quality_rate = round((high_quality_count / total_evaluations * 100), 1) if total_evaluations > 0 else 0
     
