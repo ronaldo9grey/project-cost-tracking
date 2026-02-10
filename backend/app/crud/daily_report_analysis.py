@@ -6,7 +6,7 @@ from sqlalchemy import func, desc, and_, or_
 from sqlalchemy.sql import func as sql_func
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
-from app.models.daily_report import DailyReport, DailyWorkItem
+from app.models.daily_report import DailyReport, DailyWorkItem, DailyReportEvaluation
 
 
 def get_overview_stats(
@@ -386,6 +386,130 @@ def get_task_completion_analysis(
         "delayed_tasks": delayed_tasks,
         "completion_rate": completion_rate,
         "status_counts": status_counts
+    }
+
+
+def get_evaluation_analysis(
+    db: Session,
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
+    project_id: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    获取评价数据分析
+    
+    Args:
+        db: 数据库会话
+        start_date: 开始日期
+        end_date: 结束日期
+        project_id: 项目ID筛选
+    
+    Returns:
+        评价分析数据
+    """
+    # 基础查询条件
+    query_conditions = [
+        DailyReportEvaluation.is_deleted == False,
+        DailyReportEvaluation.report_id == DailyReport.id
+    ]
+    
+    # 添加日期范围筛选
+    if start_date and end_date:
+        query_conditions.extend([
+            DailyReport.report_date >= start_date,
+            DailyReport.report_date <= end_date
+        ])
+    
+    # 添加项目筛选
+    if project_id:
+        query_conditions.append(DailyWorkItem.project_id == project_id)
+    
+    # 获取评价统计
+    evaluation_query = db.query(
+        func.avg(DailyReportEvaluation.supervisor_score).label('avg_score'),
+        func.count(DailyReportEvaluation.id).label('total_evaluations'),
+        func.count(func.distinct(DailyReportEvaluation.supervisor_id)).label('total_supervisors')
+    ).filter(*query_conditions)
+    
+    result = evaluation_query.first()
+    avg_score = float(result.avg_score or 0)
+    total_evaluations = int(result.total_evaluations or 0)
+    total_supervisors = int(result.total_supervisors or 0)
+    
+    # 获取评分分布
+    score_distribution_query = db.query(
+        DailyReportEvaluation.supervisor_score,
+        func.count(DailyReportEvaluation.id).label('count')
+    ).filter(*query_conditions).group_by(DailyReportEvaluation.supervisor_score)
+    
+    score_results = score_distribution_query.all()
+    score_distribution = {}
+    for score_result in score_results:
+        score = score_result.supervisor_score
+        count = score_result.count
+        score_distribution[f"score_{score}"] = count
+    
+    # 获取主管评价排名
+    supervisor_ranking_query = db.query(
+        DailyReportEvaluation.supervisor_id,
+        DailyReportEvaluation.supervisor_name,
+        func.avg(DailyReportEvaluation.supervisor_score).label('avg_score'),
+        func.count(DailyReportEvaluation.id).label('evaluation_count')
+    ).filter(*query_conditions).group_by(
+        DailyReportEvaluation.supervisor_id,
+        DailyReportEvaluation.supervisor_name
+    ).order_by(desc('avg_score')).limit(10)
+    
+    supervisor_results = supervisor_ranking_query.all()
+    supervisor_ranking = []
+    for i, supervisor_result in enumerate(supervisor_results, 1):
+        supervisor_ranking.append({
+            "supervisor_id": supervisor_result.supervisor_id,
+            "supervisor_name": supervisor_result.supervisor_name,
+            "avg_score": round(float(supervisor_result.avg_score or 0), 1),
+            "evaluation_count": int(supervisor_result.evaluation_count or 0),
+            "ranking": i
+        })
+    
+    # 获取员工评价排名
+    employee_evaluation_query = db.query(
+        DailyReport.employee_id,
+        DailyReport.employee_name,
+        func.avg(DailyReportEvaluation.supervisor_score).label('avg_score'),
+        func.count(DailyReportEvaluation.id).label('evaluation_count')
+    ).filter(*query_conditions).group_by(
+        DailyReport.employee_id,
+        DailyReport.employee_name
+    ).order_by(desc('avg_score')).limit(10)
+    
+    employee_results = employee_evaluation_query.all()
+    employee_evaluation_ranking = []
+    for i, employee_result in enumerate(employee_results, 1):
+        employee_evaluation_ranking.append({
+            "employee_id": employee_result.employee_id,
+            "employee_name": employee_result.employee_name,
+            "avg_score": round(float(employee_result.avg_score or 0), 1),
+            "evaluation_count": int(employee_result.evaluation_count or 0),
+            "ranking": i
+        })
+    
+    # 计算评价质量指标
+    high_quality_count = 0
+    for score_result in score_results:
+        if score_result.supervisor_score >= 4:
+            high_quality_count += score_result.count
+    
+    quality_rate = round((high_quality_count / total_evaluations * 100), 1) if total_evaluations > 0 else 0
+    
+    return {
+        "avg_score": round(avg_score, 1),
+        "total_evaluations": total_evaluations,
+        "total_supervisors": total_supervisors,
+        "score_distribution": score_distribution,
+        "supervisor_ranking": supervisor_ranking,
+        "employee_evaluation_ranking": employee_evaluation_ranking,
+        "quality_rate": quality_rate,
+        "high_quality_count": high_quality_count
     }
 
 

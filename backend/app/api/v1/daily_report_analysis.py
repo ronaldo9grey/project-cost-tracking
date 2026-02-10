@@ -14,6 +14,7 @@ from app.crud.daily_report_analysis import (
     get_project_hours_distribution,
     get_employee_hours_ranking,
     get_task_completion_analysis,
+    get_evaluation_analysis,
     get_analysis_projects_list
 )
 from app.crud.project import get_all_projects
@@ -311,6 +312,57 @@ def get_project_list(
     except Exception as e:
         print(f"获取项目列表失败: {str(e)}")
         raise HTTPException(status_code=500, detail=f"获取项目列表失败: {str(e)}")
+
+@router.get("/evaluation", summary="获取评价分析数据")
+def get_evaluation_analysis_data(
+    start_date: Optional[str] = Query(None, description="开始日期 (YYYY-MM-DD)"),
+    end_date: Optional[str] = Query(None, description="结束日期 (YYYY-MM-DD)"),
+    project_id: Optional[str] = Query(None, description="项目ID"),
+    db: Session = Depends(get_db),
+    current_user: Personnel = Depends(get_current_user)
+):
+    """
+    获取评价分析数据
+    
+    Args:
+        start_date: 开始日期
+        end_date: 结束日期
+        project_id: 项目ID
+    
+    Returns:
+        评价分析数据
+    """
+    try:
+        # 解析日期参数
+        start_dt = None
+        end_dt = None
+        
+        if start_date:
+            try:
+                start_dt = datetime.strptime(start_date, '%Y-%m-%d')
+            except ValueError:
+                raise HTTPException(status_code=400, detail="开始日期格式不正确")
+        
+        if end_date:
+            try:
+                end_dt = datetime.strptime(end_date, '%Y-%m-%d')
+            except ValueError:
+                raise HTTPException(status_code=400, detail="结束日期格式不正确")
+        
+        # 获取评价分析数据
+        evaluation_data = get_evaluation_analysis(db, start_dt, end_dt, project_id)
+        
+        return {
+            "code": 200,
+            "message": "获取评价分析数据成功",
+            "data": evaluation_data
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"获取评价分析数据失败: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"获取评价分析数据失败: {str(e)}")
 
 @router.get("/dashboard", summary="获取分析仪表板数据")
 def get_analysis_dashboard(

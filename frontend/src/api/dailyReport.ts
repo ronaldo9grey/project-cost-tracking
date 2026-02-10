@@ -243,6 +243,15 @@ export const getTaskCompletion = (params: {
   return request.get(`/api/v1/daily-report/analysis/task-completion`, { params })
 }
 
+// 获取评价分析数据
+export const getEvaluationAnalysis = (params: {
+  start_date?: string
+  end_date?: string
+  project_id?: string
+}) => {
+  return request.get(`/api/v1/daily-report/analysis/evaluation`, { params })
+}
+
 // 获取项目列表
 export const getAnalysisProjectList = () => {
   return request.get(`/api/v1/daily-report/analysis/projects`)

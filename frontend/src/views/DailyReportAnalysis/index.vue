@@ -174,6 +174,40 @@
           </div>
         </el-col>
       </el-row>
+
+      <el-row :gutter="20" style="margin-top: 20px;">
+        <!-- 评价分析图表 -->
+        <el-col :span="12">
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>主管评价分析</h3>
+              <div class="chart-controls">
+                <el-tag :type="evaluationData.qualityRate >= 80 ? 'success' : 'warning'">
+                  平均评分: {{ evaluationData.avgScore }}
+                </el-tag>
+              </div>
+            </div>
+            <div class="chart-content">
+              <div ref="evaluationChartRef" class="chart-canvas"></div>
+            </div>
+          </div>
+        </el-col>
+
+        <!-- 评分分布分析 -->
+        <el-col :span="12">
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>评分分布分析</h3>
+              <div class="chart-controls">
+                <el-tag>{{ evaluationData.totalEvaluations }}条评价</el-tag>
+              </div>
+            </div>
+            <div class="chart-content">
+              <div ref="scoreDistributionChartRef" class="chart-canvas"></div>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
     </div>
 
     <!-- 详细数据表格 -->
@@ -288,12 +322,14 @@ import {
   ArrowDown,
   Download
 } from '@element-plus/icons-vue'
+import * as echarts from 'echarts'
 import {
   getAnalysisOverview,
   getHoursTrend,
   getProjectDistribution,
   getEmployeeRanking,
   getTaskCompletion,
+  getEvaluationAnalysis,
   getAnalysisProjectList
 } from '../../api/dailyReport'
 
@@ -310,6 +346,8 @@ const hoursChartRef = ref<HTMLElement>()
 const projectChartRef = ref<HTMLElement>()
 const employeeChartRef = ref<HTMLElement>()
 const completionChartRef = ref<HTMLElement>()
+const evaluationChartRef = ref<HTMLElement>()
+const scoreDistributionChartRef = ref<HTMLElement>()
 
 // 数据
 const projectList = ref<any[]>([])
@@ -328,6 +366,15 @@ const projectDetailData = ref<any[]>([])
 const employeeDetailData = ref<any[]>([])
 const hoursTrendData = ref<any[]>([])
 const taskCompletionData = ref<any>({})
+const evaluationData = ref({
+  avgScore: 0,
+  totalEvaluations: 0,
+  totalSupervisors: 0,
+  qualityRate: 0,
+  scoreDistribution: {},
+  supervisorRanking: [],
+  employeeEvaluationRanking: []
+})
 const filteredProjectList = ref<any[]>([])
 
 // 计算属性
@@ -510,6 +557,35 @@ const loadHoursTrend = async () => {
   }
 }
 
+const loadEvaluationAnalysis = async () => {
+  try {
+    const params: any = {}
+    if (dateRange.value.length === 2) {
+      params.start_date = dateRange.value[0]
+      params.end_date = dateRange.value[1]
+    }
+    if (selectedProject.value) {
+      params.project_id = selectedProject.value
+    }
+    
+    const response = await getEvaluationAnalysis(params)
+    if (response.code === 200) {
+      const data = response.data
+      evaluationData.value = {
+        avgScore: data.avg_score || 0,
+        totalEvaluations: data.total_evaluations || 0,
+        totalSupervisors: data.total_supervisors || 0,
+        qualityRate: data.quality_rate || 0,
+        scoreDistribution: data.score_distribution || {},
+        supervisorRanking: data.supervisor_ranking || [],
+        employeeEvaluationRanking: data.employee_evaluation_ranking || []
+      }
+    }
+  } catch (error) {
+    console.error('获取评价分析数据失败:', error)
+  }
+}
+
 const getDefaultStartDate = () => {
   const date = new Date()
   date.setDate(date.getDate() - 30)
@@ -530,7 +606,8 @@ const refreshAnalysis = async () => {
       loadProjectDistribution(),
       loadEmployeeRanking(),
       loadTaskCompletion(),
-      loadHoursTrend()
+      loadHoursTrend(),
+      loadEvaluationAnalysis()
     ])
     
     ElMessage.success('数据刷新成功')
@@ -552,64 +629,560 @@ const exportEmployeeData = () => {
 
 // 图表渲染方法
 const renderHoursChart = () => {
-  // 模拟图表渲染
-  if (hoursChartRef.value) {
-    hoursChartRef.value.innerHTML = `
-      <div style="display: flex; align-items: center; justify-content: center; height: 300px; background: #f5f7fa; border-radius: 8px;">
-        <div style="text-align: center; color: #909399;">
-          <div style="font-size: 48px; margin-bottom: 8px;">📊</div>
-          <div>工时趋势图表</div>
-          <div style="font-size: 12px; margin-top: 4px;">(${hoursChartType.value === 'day' ? '按日' : hoursChartType.value === 'week' ? '按周' : '按月'})</div>
-        </div>
-      </div>
-    `
+  if (!hoursChartRef.value) return
+  
+  // 初始化或获取图表实例
+  const chart = echarts.getInstanceByDom(hoursChartRef.value) || echarts.init(hoursChartRef.value)
+  
+  // 准备数据
+  const dates = hoursTrendData.value.map(item => item.date)
+  const hours = hoursTrendData.value.map(item => item.total_hours)
+  
+  // 配置图表选项
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross'
+      },
+      formatter: function(params) {
+        const data = params[0]
+        return `
+          <div style="padding: 8px;">
+            <div><strong>日期:</strong> ${data.name}</div>
+            <div><strong>工时:</strong> ${data.value}h</div>
+          </div>
+        `
+      }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      data: dates,
+      axisLabel: {
+        rotate: dates.length > 10 ? 45 : 0,
+        fontSize: 10
+      }
+    },
+    yAxis: {
+      type: 'value',
+      name: '工时(小时)',
+      axisLabel: {
+        formatter: '{value}h'
+      }
+    },
+    series: [
+      {
+        name: '工时投入',
+        type: 'line',
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 6,
+        itemStyle: {
+          color: '#5470c6'
+        },
+        lineStyle: {
+          color: '#5470c6',
+          width: 3
+        },
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(84, 112, 198, 0.3)' },
+            { offset: 1, color: 'rgba(84, 112, 198, 0.1)' }
+          ])
+        },
+        data: hours
+      }
+    ]
   }
+  
+  chart.setOption(option, true)
+  
+  // 响应式处理
+  window.addEventListener('resize', () => {
+    chart.resize()
+  })
+}
+
+// 评价分析图表渲染
+const renderEvaluationChart = () => {
+  if (!evaluationChartRef.value) return
+  
+  // 初始化或获取图表实例
+  const chart = echarts.getInstanceByDom(evaluationChartRef.value) || echarts.init(evaluationChartRef.value)
+  
+  // 准备数据 - 显示主管评价排名前5名
+  const data = evaluationData.value.supervisorRanking.slice(0, 5)
+  
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      },
+      formatter: function(params) {
+        const data = params[0]
+        const supervisorData = data.data
+        return `
+          <div style="padding: 8px;">
+            <div><strong>${data.name}</strong></div>
+            <div>平均评分: ${supervisorData.value}分</div>
+            <div>评价数量: ${supervisorData.evaluation_count}条</div>
+          </div>
+        `
+      }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'value',
+      name: '评分',
+      min: 0,
+      max: 5,
+      axisLabel: {
+        formatter: '{value}分'
+      }
+    },
+    yAxis: {
+      type: 'category',
+      data: data.map(item => item.supervisor_name),
+      axisLabel: {
+        fontSize: 10
+      }
+    },
+    series: [
+      {
+        name: '平均评分',
+        type: 'bar',
+        data: data.map(item => ({
+          value: item.avg_score,
+          evaluation_count: item.evaluation_count,
+          itemStyle: {
+            color: item.avg_score >= 4 
+              ? '#13ce66' 
+              : item.avg_score >= 3 
+                ? '#20a0ff' 
+                : '#e6a23c'
+          }
+        })),
+        barWidth: '60%'
+      }
+    ]
+  }
+  
+  chart.setOption(option, true)
+  
+  // 响应式处理
+  window.addEventListener('resize', () => {
+    chart.resize()
+  })
+}
+
+// 评分分布图表渲染
+const renderScoreDistributionChart = () => {
+  if (!scoreDistributionChartRef.value) return
+  
+  // 初始化或获取图表实例
+  const chart = echarts.getInstanceByDom(scoreDistributionChartRef.value) || echarts.init(scoreDistributionChartRef.value)
+  
+  // 准备数据
+  const scoreData = evaluationData.value.scoreDistribution
+  const data = [
+    { name: '1分', value: scoreData.score_1 || 0, color: '#ff4949' },
+    { name: '2分', value: scoreData.score_2 || 0, color: '#e6a23c' },
+    { name: '3分', value: scoreData.score_3 || 0, color: '#20a0ff' },
+    { name: '4分', value: scoreData.score_4 || 0, color: '#5470c6' },
+    { name: '5分', value: scoreData.score_5 || 0, color: '#13ce66' }
+  ].filter(item => item.value > 0)
+  
+  if (data.length === 0) {
+    // 如果没有数据，显示空状态
+    chart.clear()
+    chart.setOption({
+      graphic: {
+        type: 'text',
+        left: 'center',
+        top: 'middle',
+        style: {
+          text: '暂无评价数据',
+          fontSize: 16,
+          fill: '#909399'
+        }
+      }
+    })
+    return
+  }
+  
+  const option = {
+    tooltip: {
+      trigger: 'item',
+      formatter: function(params) {
+        return `
+          <div style="padding: 8px;">
+            <div><strong>${params.name}</strong></div>
+            <div>数量: ${params.value}条</div>
+            <div>占比: ${params.percent}%</div>
+          </div>
+        `
+      }
+    },
+    legend: {
+      orient: 'vertical',
+      left: 'left',
+      top: 'middle',
+      textStyle: {
+        fontSize: 12
+      }
+    },
+    series: [
+      {
+        name: '评分分布',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['60%', '50%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+        label: {
+          show: true,
+          position: 'outside',
+          formatter: function(params) {
+            return `${params.name}\n${params.percent}%`
+          },
+          fontSize: 12
+        },
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        },
+        data: data
+      }
+    ]
+  }
+  
+  chart.setOption(option, true)
+  
+  // 响应式处理
+  window.addEventListener('resize', () => {
+    chart.resize()
+  })
 }
 
 const renderProjectChart = () => {
-  // 模拟图表渲染
-  if (projectChartRef.value) {
-    const chartType = projectChartType.value === 'pie' ? '🥧' : '📊'
-    projectChartRef.value.innerHTML = `
-      <div style="display: flex; align-items: center; justify-content: center; height: 300px; background: #f5f7fa; border-radius: 8px;">
-        <div style="text-align: center; color: #909399;">
-          <div style="font-size: 48px; margin-bottom: 8px;">${chartType}</div>
-          <div>项目工时分布图表</div>
-          <div style="font-size: 12px; margin-top: 4px;">(${projectChartType.value === 'pie' ? '饼图' : '柱状图'})</div>
-        </div>
-      </div>
-    `
-  }
+  if (!projectChartRef.value) return
+  
+  // 初始化或获取图表实例
+  const chart = echarts.getInstanceByDom(projectChartRef.value) || echarts.init(projectChartRef.value)
+  
+  // 准备数据
+  const data = projectDetailData.value.slice(0, 10) // 限制为前10个项目
+  const option = projectChartType.value === 'pie' 
+    ? {
+        tooltip: {
+          trigger: 'item',
+          formatter: function(params) {
+            return `
+              <div style="padding: 8px;">
+                <div><strong>${params.name}</strong></div>
+                <div>工时: ${params.value}h</div>
+                <div>占比: ${params.percent}%</div>
+                <div>人数: ${data.find(d => d.project_name === params.name)?.employee_count || 0}人</div>
+              </div>
+            `
+          }
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left',
+          top: 'middle',
+          textStyle: {
+            fontSize: 12
+          }
+        },
+        series: [
+          {
+            name: '项目工时',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            center: ['60%', '50%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: '#fff',
+              borderWidth: 2
+            },
+            label: {
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: 16,
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: data.map((item, index) => ({
+              value: item.total_hours,
+              name: item.project_name,
+              itemStyle: {
+                color: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc', '#91cc75'][index % 10]
+              }
+            }))
+          }
+        ]
+      }
+    : {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          },
+          formatter: function(params) {
+            const data = params[0]
+            const projectData = data.data
+            return `
+              <div style="padding: 8px;">
+                <div><strong>${data.name}</strong></div>
+                <div>工时: ${projectData.value}h</div>
+                <div>参与人数: ${projectData.employee_count}人</div>
+                <div>完成率: ${projectData.completion_rate}%</div>
+              </div>
+            `
+          }
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '15%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: data.map(item => item.project_name),
+          axisLabel: {
+            interval: 0,
+            rotate: 45,
+            fontSize: 10
+          }
+        },
+        yAxis: {
+          type: 'value',
+          name: '工时(小时)',
+          axisLabel: {
+            formatter: '{value}h'
+          }
+        },
+        series: [
+          {
+            name: '项目工时',
+            type: 'bar',
+            data: data.map(item => ({
+              value: item.total_hours,
+              employee_count: item.employee_count,
+              completion_rate: item.completion_rate,
+              itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: '#5470c6' },
+                  { offset: 1, color: '#91cc75' }
+                ])
+              }
+            })),
+            barWidth: '60%'
+          }
+        ]
+      }
+  
+  chart.setOption(option, true)
+  
+  // 响应式处理
+  window.addEventListener('resize', () => {
+    chart.resize()
+  })
 }
 
 const renderEmployeeChart = () => {
-  // 模拟图表渲染
-  if (employeeChartRef.value) {
-    employeeChartRef.value.innerHTML = `
-      <div style="display: flex; align-items: center; justify-content: center; height: 300px; background: #f5f7fa; border-radius: 8px;">
-        <div style="text-align: center; color: #909399;">
-          <div style="font-size: 48px; margin-bottom: 8px;">👥</div>
-          <div>人员工时排名图表</div>
-          <div style="font-size: 12px; margin-top: 4px;">(Top ${employeeTopN.value})</div>
-        </div>
-      </div>
-    `
+  if (!employeeChartRef.value) return
+  
+  // 初始化或获取图表实例
+  const chart = echarts.getInstanceByDom(employeeChartRef.value) || echarts.init(employeeChartRef.value)
+  
+  // 准备数据 - 限制为前N名
+  const data = employeeDetailData.value.slice(0, employeeTopN.value)
+  
+  // 准备图表配置
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      },
+      formatter: function(params) {
+        const data = params[0]
+        const employeeData = data.data
+        return `
+          <div style="padding: 8px;">
+            <div><strong>${data.name}</strong></div>
+            <div>总工时: ${employeeData.value}h</div>
+            <div>参与项目: ${employeeData.projects_count}个</div>
+            <div>完成任务: ${employeeData.tasks_count}个</div>
+            <div>效率评分: ${employeeData.efficiency_score}分</div>
+            <div>工作负荷: ${employeeData.workload_level}</div>
+          </div>
+        `
+      }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'value',
+      name: '工时(小时)',
+      axisLabel: {
+        formatter: '{value}h'
+      }
+    },
+    yAxis: {
+      type: 'category',
+      data: data.map(item => item.employee_name),
+      axisLabel: {
+        fontSize: 10
+      }
+    },
+    series: [
+      {
+        name: '工时',
+        type: 'bar',
+        data: data.map(item => ({
+          value: item.total_hours,
+          projects_count: item.projects_count,
+          tasks_count: item.tasks_count,
+          efficiency_score: item.efficiency_score,
+          workload_level: item.workload_level,
+          itemStyle: {
+            color: item.workload_level === '较重' 
+              ? '#ee6666' 
+              : item.workload_level === '正常' 
+                ? '#5470c6' 
+                : '#73c0de'
+          }
+        })),
+        barWidth: '60%'
+      }
+    ]
   }
+  
+  chart.setOption(option, true)
+  
+  // 响应式处理
+  window.addEventListener('resize', () => {
+    chart.resize()
+  })
 }
 
 const renderCompletionChart = () => {
-  // 模拟图表渲染
-  if (completionChartRef.value) {
-    completionChartRef.value.innerHTML = `
-      <div style="display: flex; align-items: center; justify-content: center; height: 300px; background: #f5f7fa; border-radius: 8px;">
-        <div style="text-align: center; color: #909399;">
-          <div style="font-size: 48px; margin-bottom: 8px;">✅</div>
-          <div>任务完成率分析</div>
-          <div style="font-size: 12px; margin-top: 4px;">(完成率: ${completionRate.value}%)</div>
-        </div>
-      </div>
-    `
+  if (!completionChartRef.value) return
+  
+  // 初始化或获取图表实例
+  const chart = echarts.getInstanceByDom(completionChartRef.value) || echarts.init(completionChartRef.value)
+  
+  // 准备数据
+  const completionData = taskCompletionData.value
+  const data = [
+    { name: '已完成', value: completionData.completed_tasks || 0, color: '#13ce66' },
+    { name: '进行中', value: completionData.in_progress_tasks || 0, color: '#20a0ff' },
+    { name: '待开始', value: completionData.pending_tasks || 0, color: '#e6a23c' },
+    { name: '延期', value: completionData.delayed_tasks || 0, color: '#ff4949' }
+  ]
+  
+  const total = data.reduce((sum, item) => sum + item.value, 0)
+  
+  const option = {
+    tooltip: {
+      trigger: 'item',
+      formatter: function(params) {
+        return `
+          <div style="padding: 8px;">
+            <div><strong>${params.name}</strong></div>
+            <div>任务数: ${params.value}个</div>
+            <div>占比: ${params.percent}%</div>
+          </div>
+        `
+      }
+    },
+    legend: {
+      orient: 'vertical',
+      left: 'left',
+      top: 'middle',
+      textStyle: {
+        fontSize: 12
+      }
+    },
+    series: [
+      {
+        name: '任务状态',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['60%', '50%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+        label: {
+          show: true,
+          position: 'outside',
+          formatter: function(params) {
+            return `${params.name}\n${params.percent}%`
+          },
+          fontSize: 12
+        },
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        },
+        data: data.map(item => ({
+          value: item.value,
+          name: item.name,
+          itemStyle: {
+            color: item.color
+          }
+        }))
+      }
+    ]
   }
+  
+  chart.setOption(option, true)
+  
+  // 响应式处理
+  window.addEventListener('resize', () => {
+    chart.resize()
+  })
 }
 
 // 获取默认日期范围 - 当月1日到月末最后一天
@@ -659,6 +1232,8 @@ onMounted(async () => {
   renderProjectChart()
   renderEmployeeChart()
   renderCompletionChart()
+  renderEvaluationChart()
+  renderScoreDistributionChart()
 })
 </script>
 
