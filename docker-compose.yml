@@ -3,7 +3,10 @@ version: '3.8'
 services:
   # 前端服务
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      args:
+        - NODE_ENV=production
     ports:
       - "80:80"
     depends_on:
@@ -14,7 +17,10 @@ services:
 
   # 后端服务
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    image: python:3.11-slim
     ports:
       - "8000:8000"
     restart: unless-stopped
