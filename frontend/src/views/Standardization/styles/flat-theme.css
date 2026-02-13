@@ -1,0 +1,243 @@
+/* 扁平化清新主题 - 优化版本 */
+.standardization-container {
+  background: #f8fafc;
+  color: #1e293b;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+/* 页面头部 - 简洁扁平设计 */
+.page-header {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.page-title {
+  color: #1e293b;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* 主内容区 - 纯白背景 */
+.main-content {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+/* 一级卡片 - 清晰的色彩区分 */
+.module-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.module-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #3b82f6;
+}
+
+/* 不同的卡片配色 */
+.module-card[data-type="process"] {
+  border-left: 4px solid #3b82f6;
+}
+
+.module-card[data-type="cost"] {
+  border-left: 4px solid #10b981;
+}
+
+.module-card[data-type="design"] {
+  border-left: 4px solid #f59e0b;
+}
+
+.module-card[data-type="performance"] {
+  border-left: 4px solid #ef4444;
+}
+
+.card-title {
+  color: #1e293b;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.card-description {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* 内容区 - 清晰的背景区分 */
+.content-area {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+}
+
+.content-section {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.section-title-main {
+  color: #1e293b;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 24px 0;
+  text-align: center;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 16px;
+}
+
+/* 优先级区块 - 清晰的颜色区分 */
+.cost-section {
+  margin-bottom: 32px;
+}
+
+.section-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid;
+}
+
+.priority-core .section-banner {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.priority-major .section-banner {
+  background: #fffbeb;
+  border-color: #fed7aa;
+}
+
+.priority-secondary .section-banner {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0;
+  color: #1e293b;
+}
+
+/* 卡片设计 - 扁平化 */
+.cost-card-highlight {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.cost-card-highlight:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.15);
+}
+
+/* 图标圆形设计 */
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.bg-core {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+.bg-major {
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+}
+
+.bg-secondary {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+/* 文字颜色优化 */
+.detail-label {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.detail-value {
+  color: #1e293b;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.rate-highlight {
+  color: #dc2626 !important;
+  font-weight: 700 !important;
+  font-size: 1.1rem !important;
+}
+
+/* 流程卡片 */
+.project-stage-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.project-stage-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.stage-title {
+  color: #1e293b;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+}
+
+.stage-cycle {
+  color: #f59e0b;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .standardization-container {
+    padding: 16px;
+  }
+  
+  .main-content {
+    padding: 20px;
+  }
+  
+  .page-header {
+    padding: 16px;
+  }
+}

@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业项目管理系统使用指南</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --surface-elevated: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--surface);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-2xl);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.025em;
+        }
+
+        .header .subtitle {
+            font-size: 1.25rem;
+            font-weight: 300;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .content {
+            padding: 3rem 2rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+            font-size: 1.75rem;
+        }
+
+        .subsection-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .subsection-title i {
+            color: var(--primary-light);
+            font-size: 1.25rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+
+        .feature-card i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .step-list {
+            background: var(--background);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .step {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            background: var(--primary-color);
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+            border: 1px solid #f59e0b;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .highlight-box::before {
+            content: '💡';
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .highlight-box-content {
+            margin-left: 2.5rem;
+        }
+
+        .highlight-box h4 {
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-box p {
+            color: #92400e;
+            font-size: 0.875rem;
+        }
+
+        .standards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .standard-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .standard-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .grade-a { background: #dcfce7; color: #166534; }
+        .grade-b { background: #fef3c7; color: #92400e; }
+        .grade-c { background: #fed7aa; color: #9a3412; }
+        .grade-d { background: #fee2e2; color: #991b1b; }
+        .grade-e { background: #f3e8ff; color: #7c3aed; }
+
+        .grade-letter {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-item {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            background: var(--background);
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .faq-answer {
+            padding: 1rem 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .contact-info h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info p {
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border-light);
+            margin-top: 2rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: var(--background);
+            border-radius: var(--radius-lg);
+            padding: 0.5rem;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .nav-tab:hover,
+        .nav-tab.active {
+            background: var(--surface);
+            color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 0;
+                border-radius: var(--radius-lg);
+            }
+
+            .header {
+                padding: 2rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 2rem 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .standards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .standards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-building"></i> 企业项目管理系统</h1>
+                <p class="subtitle">智能化的项目成本跟踪和团队协作平台，让工作更高效</p>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- 系统简介 -->
+            <section class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-rocket"></i>
+                    系统简介
+                </h2>
+                
+                <div class="highlight-box">
+                    <div class="highlight-box-content">
+                        <h4>欢迎使用企业项目管理系统</h4>
+                        <p>本系统专注于项目成本跟踪和团队协作，通过智能化的日报系统、项目管理和成本分析，帮助团队提升工作效率。</p>
+                    </div>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>日报填报</h3>
+                        <p>日常工作记录和进度跟踪，实时掌握团队工作状态</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-star"></i>
+                        <h3>日报评价</h3>
+                        <p>上级对员工工作的专业评估，促进团队成长</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>项目看板</h3>
+                        <p>项目进度可视化展示，一目了然掌握项目状态</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-dollar-sign"></i>
+                        <h3>成本分析</h3>
+                        <p>项目成本核算和分析，优化资源配置</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-users"></i>
+                        <h3>资源管理</h3>
+                        <p>人员和物料的统一管理，提升管理效率</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 日报填报指南 -->
+            <section class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-edit"></i>
+                    快速开始 - 日报填报
+                </h2>
+
+                <h3 class="subsection-title">
+                    <i class="fas fa-key"></i>
+                    登录系统
+                </h3>
+
+                <div class="step-list">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">打开浏览器</div>
+                            <div class="step-description">访问系统地址，进入登录页面</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">输入凭据</div>
+                            <div class="step-description">使用员工编号和密码登录系统</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-title">进入工作台</div>
+                            <div class="step-description">登录成功后自动跳转到项目看板</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">
+                    <i class="fas fa-clipboard"></i>
+                    日报填报流程
+                </h3>
+
+                <div class="step-list">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">进入日报填报</div>
+                            <div class="step-description">在左侧菜单点击"日报填报"或在项目看板点击"新建日报"</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">填写基本信息</div>
+                            <div class="step-description">
+                                <strong>必填字段：</strong><br>
+                                • 日报时间：选择工作日期（默认今天）<br>
+                                • 汇报人：自动填充当前用户信息
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-title">填写主要工作内容</div>
+                            <div class="step-description">
+                                <strong>1. 今日工作目标</strong> - 简要描述今天要完成的工作目标<br>
+                                <strong>2. 近期重点工作跟踪</strong> - 描述重要项目的最新进展<br>
+                                <strong>3. 主要工作事项</strong> - 添加具体任务内容，设置工时和完成度<br>
+                                <strong>4. 自我评价</strong> - 对今日工作进行自我评分
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <div class="step-title">提交日报</div>
+                            <div class="step-description">检查所有必填信息，点击"提交日报"按钮</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <div class="highlight-box-content">
+                        <h4>填报技巧</h4>
+                        <p>
+                            <strong>具体化：</strong>工作内容描述要具体明确<br>
+                            <strong>工时准确：</strong>合理预估和记录工作时间<br>
+                            <strong>附件丰富：</strong>相关文档和图片有助于工作回顾<br>
+                            <strong>评价客观：</strong>诚实评价工作完成情况
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 日报评价指南 -->
+            <section class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-award"></i>
+                    快速开始 - 日报评价
+                </h2>
+
+                <h3 class="subsection-title">
+                    <i class="fas fa-bullseye"></i>
+                    评价功能说明
+                </h3>
+
+                <p>日报评价是上级对下属工作的专业评估，帮助实现：</p>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>量化工作表现</h3>
+                        <p>提供标准化评价标准</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-comments"></i>
+                        <h3>促进沟通</h3>
+                        <p>及时反馈工作质量</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>持续改进</h3>
+                        <p>识别改进空间</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-trophy"></i>
+                        <h3>激励机制</h3>
+                        <p>认可优秀表现</p>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">
+                    <i class="fas fa-user-tie"></i>
+                    评价者操作流程
+                </h3>
+
+                <div class="step-list">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">查看待评价日报</div>
+                            <div class="step-description">点击左侧菜单"日报评价"，查看团队成员日报列表</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">查看日报详情</div>
+                            <div class="step-description">点击员工姓名查看详细日报内容，包括工作目标和具体任务</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-title">进行专业评价</div>
+                            <div class="step-description">选择A/B/C/D/E评价等级，填写评价内容和改进建议</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <div class="step-title">提交评价</div>
+                            <div class="step-description">确认评价信息完整，点击"提交评价"按钮</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">
+                    <i class="fas fa-star"></i>
+                    评价标准
+                </h3>
+
+                <div class="standards-grid">
+                    <div class="standard-card">
+                        <div class="grade-letter grade-a">A</div>
+                        <h4>超目标达成</h4>
+                        <p>100%以上完成，超出预期</p>
+                    </div>
+                    <div class="standard-card">
+                        <div class="grade-letter grade-b">B</div>
+                        <h4>按目标达成</h4>
+                        <p>90-99%完成，符合预期</p>
+                    </div>
+                    <div class="standard-card">
+                        <div class="grade-letter grade-c">C</div>
+                        <h4>达成目标80%</h4>
+                        <p>基本达标，有提升空间</p>
+                    </div>
+                    <div class="standard-card">
+                        <div class="grade-letter grade-d">D</div>
+                        <h4>达成目标50-80%</h4>
+                        <p>需要改进</p>
+                    </div>
+                    <div class="standard-card">
+                        <div class="grade-letter grade-e">E</div>
+                        <h4>小于目标50%</h4>
+                        <p>严重偏离目标，需要重点关注</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 最佳实践 -->
+            <section class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-lightbulb"></i>
+                    最佳实践建议
+                </h2>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>日报填报建议</h3>
+                        <p>及时性、完整性、准确性、关联性</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-comments"></i>
+                        <h3>评价工作建议</h3>
+                        <p>及时性、建设性、具体性、公平性</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-handshake"></i>
+                        <h3>团队协作建议</h3>
+                        <p>建立习惯、积极互动、数据驱动</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 常见问题 -->
+            <section class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-question-circle"></i>
+                    常见问题解答
+                </h2>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-key"></i> 忘记密码怎么办？
+                    </div>
+                    <div class="faq-answer">
+                        联系系统管理员重置密码，或使用密码找回功能。
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-edit"></i> 日报可以修改吗？
+                    </div>
+                    <div class="faq-answer">
+                        提交前可以任意修改，提交后需要联系管理员修改。
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-star"></i> 评价后可以修改吗？
+                    </div>
+                    <div class="faq-answer">
+                        提交前可以修改评价内容，提交后建议联系管理员处理。
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-history"></i> 如何查看历史日报？
+                    </div>
+                    <div class="faq-answer">
+                        在"日报填报"页面按日期筛选，或在"项目看板"查看个人历史。
+                    </div>
+                </div>
+            </section>
+
+            <!-- 联系方式 -->
+            <div class="contact-info">
+                <h3><i class="fas fa-headset"></i> 技术支持</h3>
+                <p>遇到问题时，请联系技术支持获取帮助</p>
+                <p><strong>技术支持热线：</strong> 15010285938</p>
+                <p><strong>技术支持邮箱：</strong> Chao.Wang08@geely.com</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><i class="fas fa-calendar"></i> 最后更新：2026年2月5日 | 版本：v1.0.0</p>
+        </div>
+    </div>
+</body>
+</html>

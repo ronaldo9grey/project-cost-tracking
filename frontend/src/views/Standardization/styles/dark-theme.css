@@ -1,0 +1,240 @@
+/* 深色专业主题 */
+.standardization-container {
+  background: #0f172a;
+  color: #f1f5f9;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+/* 页面头部 */
+.page-header {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid #334155;
+}
+
+.page-title {
+  color: #f1f5f9;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* 主内容区 */
+.main-content {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 32px;
+  border: 1px solid #334155;
+}
+
+/* 模块卡片 */
+.module-card {
+  background: #334155;
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.module-card:hover {
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* 卡片类型颜色区分 */
+.module-card[data-type="process"] {
+  border-left: 4px solid #3b82f6;
+}
+
+.module-card[data-type="cost"] {
+  border-left: 4px solid #10b981;
+}
+
+.module-card[data-type="design"] {
+  border-left: 4px solid #f59e0b;
+}
+
+.module-card[data-type="performance"] {
+  border-left: 4px solid #ef4444;
+}
+
+.card-title {
+  color: #f1f5f9;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.card-description {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* 内容区域 */
+.content-area {
+  background: #0f172a;
+  border-radius: 8px;
+  padding: 24px;
+  border: 1px solid #334155;
+}
+
+.content-section {
+  background: #1e293b;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 16px;
+  border: 1px solid #334155;
+}
+
+.section-title-main {
+  color: #f1f5f9;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 24px 0;
+  text-align: center;
+  border-bottom: 2px solid #334155;
+  padding-bottom: 16px;
+}
+
+/* 优先级区块 */
+.cost-section {
+  margin-bottom: 32px;
+}
+
+.section-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid;
+}
+
+.priority-core .section-banner {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #dc2626;
+}
+
+.priority-major .section-banner {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: #f59e0b;
+}
+
+.priority-secondary .section-banner {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+}
+
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0;
+  color: #f1f5f9;
+}
+
+/* 成本卡片 */
+.cost-card-highlight {
+  background: #334155;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #475569;
+  transition: all 0.2s ease;
+}
+
+.cost-card-highlight:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* 图标 */
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.bg-core {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+.bg-major {
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+}
+
+.bg-secondary {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+/* 文字颜色 */
+.detail-label {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.detail-value {
+  color: #f1f5f9;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.rate-highlight {
+  color: #f59e0b !important;
+  font-weight: 700 !important;
+  font-size: 1.1rem !important;
+}
+
+/* 流程卡片 */
+.project-stage-card {
+  background: #334155;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #475569;
+  transition: all 0.2s ease;
+}
+
+.project-stage-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.stage-title {
+  color: #f1f5f9;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+}
+
+.stage-cycle {
+  color: #f59e0b;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .standardization-container {
+    padding: 16px;
+  }
+  
+  .main-content {
+    padding: 20px;
+  }
+  
+  .page-header {
+    padding: 16px;
+  }
+}
