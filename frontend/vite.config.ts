@@ -23,10 +23,20 @@ export default defineConfig({
   },
   build: {
     target: 'es2015',
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       external: [],
       output: {
-        manualChunks: undefined
+        manualChunks: {
+          // Vue 核心库
+          'vue-vendor': ['vue', 'vue-router', 'pinia'],
+          // UI 组件库
+          'ui-vendor': ['element-plus'],
+          // 图表库
+          'charts-vendor': ['echarts'],
+          // 工具库
+          'utils-vendor': ['axios', 'xlsx', 'gsap']
+        }
       }
     }
   },

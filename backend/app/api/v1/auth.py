@@ -1,10 +1,11 @@
-import hashlib
+import re
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from typing import Optional
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
+from passlib.context import CryptContext
 
 from app.core.config import settings
 from app.core.dependencies import get_db
@@ -17,15 +18,51 @@ router = APIRouter()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
+# 使用 bcrypt 进行密码哈希
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """验证MD5密码"""
-    return hashlib.md5(plain_password.encode()).hexdigest() == hashed_password
+    """验证密码（支持 bcrypt 和兼容旧版 MD5）"""
+    # 检查是否是 bcrypt 格式（以 $2 开头）
+    if hashed_password.startswith('$2'):
+        return pwd_context.verify(plain_password, hashed_password)
+    else:
+        # 兼容旧版 MD5（迁移后删除）
+        import hashlib
+        return hashlib.md5(plain_password.encode()).hexdigest() == hashed_password
 
 
 def get_password_hash(password: str) -> str:
-    """生成MD5密码哈希"""
-    return hashlib.md5(password.encode()).hexdigest()
+    """生成 bcrypt 密码哈希"""
+    return pwd_context.hash(password)
+
+
+def validate_password_strength(password: str) -> tuple[bool, str]:
+    """验证密码强度
+    
+    要求：
+    - 至少8位
+    - 包含大小写字母
+    - 包含数字
+    - 包含特殊字符
+    """
+    if len(password) < 8:
+        return False, "密码长度至少8位"
+    
+    if not re.search(r'[A-Z]', password):
+        return False, "密码必须包含大写字母"
+    
+    if not re.search(r'[a-z]', password):
+        return False, "密码必须包含小写字母"
+    
+    if not re.search(r'\d', password):
+        return False, "密码必须包含数字"
+    
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return False, "密码必须包含特殊字符"
+    
+    return True, "密码强度符合要求"
 
 
 def get_user(db: Session, username: str) -> Optional[Personnel]:
@@ -155,12 +192,20 @@ def change_password(
     db: Session = Depends(get_db)
 ):
     """修改密码"""
+    # 验证旧密码
     if not verify_password(password_data.old_password, current_user.password):
         raise BadRequestException(message="旧密码错误")
     
+    # 验证新密码和确认密码一致
     if password_data.new_password != password_data.confirm_password:
         raise BadRequestException(message="新密码和确认密码不一致")
     
+    # 验证新密码强度
+    is_valid, message = validate_password_strength(password_data.new_password)
+    if not is_valid:
+        raise BadRequestException(message=f"密码强度不足：{message}")
+    
+    # 更新密码
     current_user.password = get_password_hash(password_data.new_password)
     db.commit()
     db.refresh(current_user)
