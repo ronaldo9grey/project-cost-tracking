@@ -5,7 +5,7 @@ App({
   globalData: {
     userInfo: null,
     token: null,
-    apiBaseUrl: 'https://your-api-domain.com/api/v1'
+    apiBaseUrl: 'http://123.207.74.78:8000/api/v1'
   },
 
   onLaunch() {
