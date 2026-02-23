@@ -12,6 +12,7 @@ from .daily_report_analysis import router as daily_report_analysis
 from .project_tracking import router as project_tracking
 from .daily_report_evaluation import router as daily_report_evaluation
 from .ai_daily_report import router as ai_daily_report
+from .notification import router as notification
 
 __all__ = [
     'auth',
@@ -24,5 +25,6 @@ __all__ = [
     'daily_report_analysis',
     'project_tracking',
     'daily_report_evaluation',
-    'ai_daily_report'
+    'ai_daily_report',
+    'notification'
 ]
