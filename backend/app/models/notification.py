@@ -32,6 +32,12 @@ class NotificationSetting(Base):
     # 企业微信配置
     wechat_user_id = Column(String(100), comment="企业微信用户ID")
     
+    # 小程序配置
+    mini_program_openid = Column(String(100), comment="小程序openid")
+    
+    # 微信公众号配置
+    wechat_official_openid = Column(String(100), comment="微信公众号openid")
+    
     # 通知开关
     daily_report_reminder = Column(Boolean, default=True, comment="日报填写提醒")
     evaluation_notification = Column(Boolean, default=True, comment="评价通知")

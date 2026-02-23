@@ -13,6 +13,7 @@ from .project_tracking import router as project_tracking
 from .daily_report_evaluation import router as daily_report_evaluation
 from .ai_daily_report import router as ai_daily_report
 from .notification import router as notification
+from .wechat_official import router as wechat_official
 
 __all__ = [
     'auth',
@@ -26,5 +27,6 @@ __all__ = [
     'project_tracking',
     'daily_report_evaluation',
     'ai_daily_report',
-    'notification'
+    'notification',
+    'wechat_official'
 ]

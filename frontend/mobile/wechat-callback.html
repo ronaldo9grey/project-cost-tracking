@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信授权处理中...</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .loading-box {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            max-width: 320px;
+            width: 100%;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e8f5e9;
+            border-top: 4px solid #07C160;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .title { font-size: 18px; color: #333; margin-bottom: 8px; }
+        .desc { font-size: 14px; color: #666; }
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            background: #07C160;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: white;
+        }
+        .error-icon {
+            width: 60px;
+            height: 60px;
+            background: #ff4d4f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: white;
+        }
+        .btn {
+            background: #07C160;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            display: none;
+        }
+        .btn.show { display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="loading-box" id="loadingBox">
+        <div class="spinner" id="spinner"></div>
+        <div class="success-icon" id="successIcon" style="display: none;">✓</div>
+        <div class="error-icon" id="errorIcon" style="display: none;">✗</div>
+        <div class="title" id="title">正在处理...</div>
+        <div class="desc" id="desc">请稍候，正在完成微信授权</div>
+        <button class="btn" id="backBtn" onclick="goBack()">返回日报页面</button>
+    </div>
+
+    <script>
+        const API_BASE = window.location.hostname === 'localhost' 
+            ? 'http://localhost:8000/api/v1' 
+            : 'https://your-domain.com/api/v1';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取URL参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const state = urlParams.get('state');
+
+            if (!code) {
+                showError('授权失败，未获取到code');
+                return;
+            }
+
+            // 处理授权
+            handleAuth(code, state);
+        });
+
+        async function handleAuth(code, state) {
+            try {
+                // 第一步：通过code获取openid
+                const authRes = await fetch(`${API_BASE}/wechat-official/auth/callback`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code, state })
+                });
+                const authData = await authRes.json();
+
+                if (authData.code !== 200) {
+                    showError(authData.message || '授权处理失败');
+                    return;
+                }
+
+                const openid = authData.data.openid;
+                const nickname = authData.data.nickname;
+
+                // 第二步：绑定openid到当前用户
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    // 未登录，保存openid并跳转到登录页
+                    localStorage.setItem('pendingOpenid', openid);
+                    showError('请先登录系统，再进行微信绑定');
+                    document.getElementById('backBtn').textContent = '去登录';
+                    document.getElementById('backBtn').onclick = () => {
+                        window.location.href = '/login.html';
+                    };
+                    document.getElementById('backBtn').classList.add('show');
+                    return;
+                }
+
+                const bindRes = await fetch(`${API_BASE}/wechat-official/bind-openid`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ openid })
+                });
+                const bindData = await bindRes.json();
+
+                if (bindData.code === 200) {
+                    showSuccess(nickname ? `绑定成功！欢迎 ${nickname}` : '微信绑定成功！');
+                    setTimeout(() => {
+                        window.location.href = '/mobile/wechat-daily-report.html';
+                    }, 2000);
+                } else {
+                    showError(bindData.message || '绑定失败');
+                }
+            } catch (error) {
+                console.error('授权处理异常:', error);
+                showError('网络错误，请稍后重试');
+            }
+        }
+
+        function showSuccess(message) {
+            document.getElementById('spinner').style.display = 'none';
+            document.getElementById('successIcon').style.display = 'flex';
+            document.getElementById('title').textContent = '绑定成功';
+            document.getElementById('desc').textContent = message;
+        }
+
+        function showError(message) {
+            document.getElementById('spinner').style.display = 'none';
+            document.getElementById('errorIcon').style.display = 'flex';
+            document.getElementById('title').textContent = '绑定失败';
+            document.getElementById('desc').textContent = message;
+            document.getElementById('backBtn').classList.add('show');
+        }
+
+        function goBack() {
+            window.location.href = '/mobile/wechat-daily-report.html';
+        }
+    </script>
+</body>
+</html>

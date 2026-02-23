@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>日报填报 - 项目管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+        
+        /* 头部 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        /* 卡片样式 */
+        .card {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        /* 表单元素 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-label .required {
+            color: #ff4d4f;
+            margin-right: 4px;
+        }
+        
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #fafafa;
+            transition: all 0.3s;
+        }
+        
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+        
+        /* 工作事项 */
+        .work-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .work-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .work-item-index {
+            font-size: 13px;
+            color: #667eea;
+            font-weight: 500;
+        }
+        
+        .delete-btn {
+            color: #ff4d4f;
+            font-size: 13px;
+            padding: 4px 8px;
+        }
+        
+        .work-item-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        
+        .work-item-row select,
+        .work-item-row input {
+            flex: 1;
+        }
+        
+        .add-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            color: #667eea;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+        
+        /* 评价选项 */
+        .evaluation-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .evaluation-option {
+            flex: 1;
+            min-width: 70px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .evaluation-option.active {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+        
+        .evaluation-option .grade {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 4px;
+        }
+        
+        .evaluation-option .label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* AI生成按钮 */
+        .ai-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 25px;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 12px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .ai-btn::before {
+            content: "✨";
+        }
+        
+        /* 底部按钮 */
+        .bottom-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #f0f2ff;
+            color: #667eea;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        /* 弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            font-size: 16px;
+        }
+        
+        .modal-close {
+            font-size: 24px;
+            color: #999;
+            padding: 4px;
+        }
+        
+        .modal-body {
+            padding: 16px;
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            z-index: 300;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .loading.show {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 16px;
+            color: #666;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 400;
+            display: none;
+        }
+        
+        .toast.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <div class="header">
+        <h1>📋 工作日报</h1>
+    </div>
+
+    <!-- AI生成按钮 -->
+    <button class="ai-btn" onclick="showAIModal()">
+        AI 智能生成日报
+    </button>
+
+    <!-- 日期选择 -->
+    <div class="card">
+        <div class="form-group">
+            <label class="form-label">日报日期</label>
+            <input type="date" id="reportDate" value="">
+        </div>
+    </div>
+
+    <!-- 工作目标 -->
+    <div class="card">
+        <div class="form-group">
+            <label class="form-label"><span class="required">*</span>今日工作目标</label>
+            <textarea id="workGoals" placeholder="请描述今天的工作目标..." maxlength="500"></textarea>
+            <div class="char-count"><span id="workGoalsCount">0</span>/500</div>
+        </div>
+    </div>
+
+    <!-- 关键进展 -->
+    <div class="card">
+        <div class="form-group">
+            <label class="form-label"><span class="required">*</span>关键工作进展</label>
+            <textarea id="keyProgress" placeholder="请描述关键工作进展和重要成果..." maxlength="1000"></textarea>
+            <div class="char-count"><span id="keyProgressCount">0</span>/1000</div>
+        </div>
+    </div>
+
+    <!-- 工作事项 -->
+    <div class="card">
+        <div class="form-group">
+            <label class="form-label"><span class="required">*</span>具体工作事项</label>
+            <div id="workItems"></div>
+            <div class="add-btn" onclick="addWorkItem()">
+                + 添加工作事项
+            </div>
+        </div>
+    </div>
+
+    <!-- 明日计划 -->
+    <div class="card">
+        <div class="form-group">
+            <label class="form-label">明日工作计划</label>
+            <textarea id="tomorrowPlan" placeholder="请描述明天的工作计划..." maxlength="500"></textarea>
+            <div class="char-count"><span id="tomorrowPlanCount">0</span>/500</div>
+        </div>
+    </div>
+
+    <!-- 自我评价 -->
+    <div class="card">
+        <div class="form-group">
+            <label class="form-label">自我评价</label>
+            <div class="evaluation-options">
+                <div class="evaluation-option active" data-value="A" onclick="selectEvaluation('A')">
+                    <span class="grade">A</span>
+                    <span class="label">超目标达成</span>
+                </div>
+                <div class="evaluation-option" data-value="B" onclick="selectEvaluation('B')">
+                    <span class="grade">B</span>
+                    <span class="label">按目标达成</span>
+                </div>
+                <div class="evaluation-option" data-value="C" onclick="selectEvaluation('C')">
+                    <span class="grade">C</span>
+                    <span class="label">基本达标</span>
+                </div>
+                <div class="evaluation-option" data-value="D" onclick="selectEvaluation('D')">
+                    <span class="grade">D</span>
+                    <span class="label">需要改进</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="bottom-actions">
+        <button class="btn btn-primary" onclick="saveDraft()">保存草稿</button>
+        <button class="btn btn-success" onclick="submitReport()">提交日报</button>
+    </div>
+
+    <!-- AI弹窗 -->
+    <div class="modal" id="aiModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✨ AI 生成日报</h3>
+                <span class="modal-close" onclick="hideAIModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">简要描述今天的工作内容</label>
+                    <textarea id="aiInput" placeholder="例如：完成了需求分析文档的编写，参加了项目评审会议..." style="min-height: 120px;"></textarea>
+                </div>
+                <button class="btn btn-success" style="width: 100%;" onclick="generateByAI()">开始生成</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载 -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">处理中...</div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // API基础配置
+        const API_BASE = 'https://your-api-domain.com/api/v1';
+        let workItemCount = 0;
+        let currentEvaluation = 'B';
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置默认日期为今天
+            document.getElementById('reportDate').value = new Date().toISOString().split('T')[0];
+            
+            // 添加第一个工作事项
+            addWorkItem();
+            
+            // 绑定字数统计
+            bindCharCount('workGoals', 'workGoalsCount');
+            bindCharCount('keyProgress', 'keyProgressCount');
+            bindCharCount('tomorrowPlan', 'tomorrowPlanCount');
+        });
+
+        // 字数统计
+        function bindCharCount(inputId, countId) {
+            const input = document.getElementById(inputId);
+            const count = document.getElementById(countId);
+            input.addEventListener('input', function() {
+                count.textContent = this.value.length;
+            });
+        }
+
+        // 添加工作事项
+        function addWorkItem() {
+            workItemCount++;
+            const container = document.getElementById('workItems');
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'work-item';
+            itemDiv.dataset.index = workItemCount;
+            itemDiv.innerHTML = `
+                <div class="work-item-header">
+                    <span class="work-item-index">事项 ${workItemCount}</span>
+                    <span class="delete-btn" onclick="deleteWorkItem(this)">删除</span>
+                </div>
+                <input type="text" placeholder="任务名称" class="work-item-name">
+                <div class="work-item-row">
+                    <select class="work-item-status">
+                        <option value="未开始">未开始</option>
+                        <option value="进行中" selected>进行中</option>
+                        <option value="已完成">已完成</option>
+                    </select>
+                    <input type="number" placeholder="工时(小时)" class="work-item-hours" min="0" step="0.5">
+                </div>
+            `;
+            container.appendChild(itemDiv);
+        }
+
+        // 删除工作事项
+        function deleteWorkItem(btn) {
+            const item = btn.closest('.work-item');
+            item.remove();
+            // 重新编号
+            const items = document.querySelectorAll('.work-item');
+            items.forEach((item, index) => {
+                item.querySelector('.work-item-index').textContent = `事项 ${index + 1}`;
+            });
+            workItemCount = items.length;
+        }
+
+        // 选择评价
+        function selectEvaluation(value) {
+            currentEvaluation = value;
+            document.querySelectorAll('.evaluation-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            document.querySelector(`.evaluation-option[data-value="${value}"]`).classList.add('active');
+        }
+
+        // 显示/隐藏AI弹窗
+        function showAIModal() {
+            document.getElementById('aiModal').classList.add('show');
+        }
+
+        function hideAIModal() {
+            document.getElementById('aiModal').classList.remove('show');
+        }
+
+        // AI生成
+        async function generateByAI() {
+            const input = document.getElementById('aiInput').value.trim();
+            if (!input) {
+                showToast('请输入工作内容');
+                return;
+            }
+
+            showLoading('AI生成中...');
+
+            try {
+                const response = await fetch(`${API_BASE}/ai-daily/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        projects: ['项目A'],
+                        tasks: [{ name: input, status: '已完成' }]
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.code === 200 && result.data) {
+                    fillAIReport(result.data);
+                    hideAIModal();
+                    showToast('AI生成成功');
+                } else {
+                    showToast(result.message || '生成失败');
+                }
+            } catch (error) {
+                showToast('网络错误');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // 填充AI内容
+        function fillAIReport(data) {
+            if (data.work_goals) {
+                document.getElementById('workGoals').value = data.work_goals;
+                document.getElementById('workGoalsCount').textContent = data.work_goals.length;
+            }
+            if (data.key_progress) {
+                document.getElementById('keyProgress').value = data.key_progress;
+                document.getElementById('keyProgressCount').textContent = data.key_progress.length;
+            }
+            if (data.tomorrow_plan) {
+                document.getElementById('tomorrowPlan').value = data.tomorrow_plan;
+                document.getElementById('tomorrowPlanCount').textContent = data.tomorrow_plan.length;
+            }
+        }
+
+        // 收集表单数据
+        function collectFormData() {
+            const workItems = [];
+            document.querySelectorAll('.work-item').forEach(item => {
+                const name = item.querySelector('.work-item-name').value.trim();
+                const status = item.querySelector('.work-item-status').value;
+                const hours = item.querySelector('.work-item-hours').value;
+                if (name) {
+                    workItems.push({ name, status, planned_hours: hours });
+                }
+            });
+
+            return {
+                report_date: document.getElementById('reportDate').value,
+                work_goals: document.getElementById('workGoals').value,
+                key_progress: document.getElementById('keyProgress').value,
+                tomorrow_plan: document.getElementById('tomorrowPlan').value,
+                self_evaluation: currentEvaluation,
+                work_items: workItems,
+                main_work_items: workItems.map(i => `${i.name}(${i.status}, ${i.planned_hours}小时)`).join('; ')
+            };
+        }
+
+        // 验证表单
+        function validateForm() {
+            const data = collectFormData();
+            
+            if (!data.work_goals.trim()) {
+                showToast('请填写工作目标');
+                return false;
+            }
+            if (!data.key_progress.trim()) {
+                showToast('请填写工作进展');
+                return false;
+            }
+            if (data.work_items.length === 0) {
+                showToast('请添加至少一项工作事项');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // 保存草稿
+        async function saveDraft() {
+            await submitData('draft');
+        }
+
+        // 提交日报
+        async function submitReport() {
+            if (!validateForm()) return;
+            await submitData('submitted');
+        }
+
+        // 提交数据
+        async function submitData(status) {
+            const data = collectFormData();
+            data.status = status;
+
+            showLoading(status === 'draft' ? '保存中...' : '提交中...');
+
+            try {
+                const response = await fetch(`${API_BASE}/daily-report`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    showToast(status === 'draft' ? '保存成功' : '提交成功');
+                    if (status === 'submitted') {
+                        setTimeout(() => {
+                            // 返回首页或关闭页面
+                            window.location.href = '/mobile/index.html';
+                        }, 1500);
+                    }
+                } else {
+                    showToast(result.message || '操作失败');
+                }
+            } catch (error) {
+                showToast('网络错误');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // 显示加载
+        function showLoading(text = '处理中...') {
+            document.querySelector('.loading-text').textContent = text;
+            document.getElementById('loading').classList.add('show');
+        }
+
+        // 隐藏加载
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('show');
+        }
+
+        // 显示Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
