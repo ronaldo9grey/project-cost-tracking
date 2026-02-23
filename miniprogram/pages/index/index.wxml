@@ -1,0 +1,94 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 用户欢迎区域 -->
+  <view class="welcome-card card">
+    <view class="user-info">
+      <text class="greeting">{{greeting}}，{{userInfo.name || '用户'}}</text>
+      <text class="date">{{currentDate}}</text>
+    </view>
+    <view class="quick-stats">
+      <view class="stat-item" bindtap="goToReport">
+        <text class="stat-value">{{todayStatus}}</text>
+        <text class="stat-label">今日日报</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{pendingEvaluations}}</text>
+        <text class="stat-label">待评价</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{thisMonthReports}}</text>
+        <text class="stat-label">本月提交</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快速操作 -->
+  <view class="quick-actions card">
+    <text class="title">快速操作</text>
+    <view class="action-grid">
+      <view class="action-item" bindtap="quickFillReport">
+        <view class="action-icon primary">
+          <text class="icon">📝</text>
+        </view>
+        <text class="action-text">快速填报</text>
+      </view>
+      <view class="action-item" bindtap="aiGenerateReport">
+        <view class="action-icon success">
+          <text class="icon">🤖</text>
+        </view>
+        <text class="action-text">AI生成</text>
+      </view>
+      <view class="action-item" bindtap="viewReports">
+        <view class="action-icon warning">
+          <text class="icon">📋</text>
+        </view>
+        <text class="action-text">我的日报</text>
+      </view>
+      <view class="action-item" bindtap="viewEvaluations">
+        <view class="action-icon danger">
+          <text class="icon">⭐</text>
+        </view>
+        <text class="action-text">待评价</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近日报 -->
+  <view class="recent-reports card">
+    <view class="section-header">
+      <text class="title">最近日报</text>
+      <text class="more" bindtap="viewAllReports">查看全部 ></text>
+    </view>
+    
+    <view wx:if="{{recentReports.length > 0}}">
+      <view class="report-item" wx:for="{{recentReports}}" wx:key="id" bindtap="viewReportDetail" data-id="{{item.id}}">
+        <view class="report-header">
+          <text class="report-date">{{item.report_date}}</text>
+          <text class="report-status {{item.status}}">{{item.statusText}}</text>
+        </view>
+        <view class="report-preview">
+          <text class="preview-text">{{item.preview}}</text>
+        </view>
+        <view class="report-footer">
+          <text class="task-count">{{item.task_count}} 项工作</text>
+          <text class="evaluation" wx:if="{{item.evaluation}}">已评价: {{item.evaluation}}</text>
+        </view>
+      </view>
+    </view>
+    
+    <view wx:else class="empty-state">
+      <text class="empty-text">暂无日报记录</text>
+    </view>
+  </view>
+
+  <!-- AI推荐 -->
+  <view class="ai-suggestion card" wx:if="{{aiSuggestion}}">
+    <view class="ai-header">
+      <text class="ai-icon">🤖</text>
+      <text class="title">AI 工作建议</text>
+    </view>
+    <view class="ai-content">
+      <text>{{aiSuggestion}}</text>
+    </view>
+  </view>
+</view>

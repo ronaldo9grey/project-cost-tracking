@@ -1,0 +1,25 @@
+<!--pages/statistics/statistics.wxml-->
+<view class="container">
+  <view class="stats-overview card">
+    <text class="title">本月概览</text>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-value">{{stats.totalReports || 0}}</text>
+        <text class="stat-label">日报提交</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.avgRating || '-'}}</text>
+        <text class="stat-label">平均评价</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.completionRate || 0}}%</text>
+        <text class="stat-label">完成率</text>
+      </view>
+    </view>
+  </view>
+  
+  <view class="ai-analysis card" wx:if="{{analysis}}">
+    <text class="title">AI 智能分析</text>
+    <text class="analysis-text">{{analysis}}</text>
+  </view>
+</view>

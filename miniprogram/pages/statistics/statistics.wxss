@@ -1,0 +1,30 @@
+/**pages/statistics/statistics.wxss**/
+.stats-grid {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20rpx;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #1890ff;
+  margin-bottom: 10rpx;
+}
+
+.stat-label {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.ai-analysis .analysis-text {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.8;
+}
