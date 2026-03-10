@@ -24,10 +24,9 @@ services:
     ports:
       - "8000:8000"
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
-      # 使用现有数据库配置
-      - DATABASE_URL=postgresql://yjydb:Jlbk@2025@cd-postgres-2p7vnsx4.sql.tencentcdb.com:25331/project_cost_tracking
-      - SECRET_KEY=project-management-system-secret-key-2024-production
       - API_PORT=8000
       - API_HOST=0.0.0.0
     volumes:

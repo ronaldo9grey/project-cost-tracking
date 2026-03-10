@@ -199,11 +199,20 @@ const routes: RouteRecordRaw[] = [
     meta: {
       title: '成本API测试'
     }
+  },
+  // 目标管理路由
+  {
+    path: '/monthly-goals',
+    name: 'MonthlyGoals',
+    component: () => import('../views/MonthlyGoals/index.vue'),
+    meta: {
+      title: '目标管理'
+    }
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory('/project/'),
   routes
 })
 

@@ -19,7 +19,7 @@ export const userDataAnalysis = async () => {
   console.log('\n2. 调用后端API获取真实用户信息:')
   
   try {
-    const userResponse = await fetch('/api/v1/auth/users/me', {
+    const userResponse = await fetch('/project/api/v1/auth/users/me', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -56,7 +56,7 @@ export const userDataAnalysis = async () => {
       // 4. 检查日报数据
       console.log('\n4. 检查日报数据:')
       try {
-        const reportsResponse = await fetch('/api/v1/daily-report/legacy/my-reports', {
+        const reportsResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports', {
           headers: {
             'Authorization': `Bearer ${token}`
           }

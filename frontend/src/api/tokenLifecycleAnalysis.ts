@@ -53,9 +53,9 @@ export const tokenLifecycleAnalysis = async () => {
   // 4. 测试当前token在不同API中的表现
   console.log('3. 测试当前token在不同API中的表现:')
   const apiTests = [
-    { name: '列表API', url: '/api/v1/daily-report/legacy/my-reports' },
-    { name: '详情API', url: '/api/v1/daily-report/legacy/my-reports/12/' },
-    { name: '任务API', url: '/api/v1/daily-report/legacy/my-tasks' }
+    { name: '列表API', url: 'v1/daily-report/legacy/my-reports' },
+    { name: '详情API', url: 'v1/daily-report/legacy/my-reports/12/' },
+    { name: '任务API', url: 'v1/daily-report/legacy/my-tasks' }
   ]
   
   const testResults = []
@@ -97,7 +97,7 @@ export const tokenLifecycleAnalysis = async () => {
     formData.append('username', 'admin')
     formData.append('password', '123456')
     
-    const loginResponse = await fetch('/api/v1/auth/login', {
+    const loginResponse = await fetch('/project/api/v1/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formData
@@ -120,7 +120,7 @@ export const tokenLifecycleAnalysis = async () => {
         
         // 立即测试新token
         console.log('  测试新token...')
-        const newDetailResponse = await fetch('/api/v1/daily-report/legacy/my-reports/12/', {
+        const newDetailResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports/12/', {
           headers: {
             'Authorization': `Bearer ${newToken}`,
             'Content-Type': 'application/json'

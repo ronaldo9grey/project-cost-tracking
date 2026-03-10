@@ -9,9 +9,8 @@ from typing import List, Optional, Dict
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 
-from app.models.daily_report import DailyReport
+from app.models.daily_report import DailyReport, DailyReportEvaluation
 from app.models.resource import Personnel
-from app.models.daily_report_evaluation import DailyReportEvaluation
 
 
 class WeChatNotificationService:

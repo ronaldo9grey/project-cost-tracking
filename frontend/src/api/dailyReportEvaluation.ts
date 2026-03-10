@@ -54,7 +54,7 @@ export const getSubordinateReports = (params?: {
   start_date?: string
   end_date?: string
 }) => {
-  return request.get<DailyReport[]>('/api/v1/daily-report-evaluation/subordinate-reports', { params })
+  return request.get<DailyReport[]>('v1/daily-report-evaluation/subordinate-reports', { params })
 }
 
 /**
@@ -63,7 +63,7 @@ export const getSubordinateReports = (params?: {
 export const getEvaluationStats = (params?: {
   supervisor_id?: string
 }) => {
-  return request.get<EvaluationStats>('/api/v1/daily-report-evaluation/stats', { params })
+  return request.get<EvaluationStats>('v1/daily-report-evaluation/stats', { params })
 }
 
 /**
@@ -71,7 +71,7 @@ export const getEvaluationStats = (params?: {
  * @param evaluation 评价信息
  */
 export const evaluateDailyReport = (evaluation: EvaluateRequest) => {
-  return request.post('/api/v1/daily-report-evaluation/evaluate', evaluation)
+  return request.post('v1/daily-report-evaluation/evaluate', evaluation)
 }
 
 /**
@@ -79,7 +79,7 @@ export const evaluateDailyReport = (evaluation: EvaluateRequest) => {
  * @param reportId 日报ID
  */
 export const getReportDetail = (reportId: number) => {
-  return request.get<DailyReport>(`/api/v1/daily-report-evaluation/reports/${reportId}`)
+  return request.get<DailyReport>(`v1/daily-report-evaluation/reports/${reportId}`)
 }
 
 /**
@@ -98,7 +98,7 @@ export const getEvaluationHistory = (params?: {
     total: number
     page: number
     limit: number
-  }>('/api/v1/daily-report-evaluation/history', { params })
+  }>('v1/daily-report-evaluation/history', { params })
 }
 
 /**
@@ -107,7 +107,7 @@ export const getEvaluationHistory = (params?: {
  * @param evaluation 评价信息
  */
 export const updateEvaluation = (evaluationId: number, evaluation: Partial<EvaluateRequest>) => {
-  return request.put(`/api/v1/daily-report-evaluation/evaluations/${evaluationId}`, evaluation)
+  return request.put(`v1/daily-report-evaluation/evaluations/${evaluationId}`, evaluation)
 }
 
 /**
@@ -115,7 +115,7 @@ export const updateEvaluation = (evaluationId: number, evaluation: Partial<Evalu
  * @param evaluationId 评价ID
  */
 export const deleteEvaluation = (evaluationId: number) => {
-  return request.delete(`/api/v1/daily-report-evaluation/evaluations/${evaluationId}`)
+  return request.delete(`v1/daily-report-evaluation/evaluations/${evaluationId}`)
 }
 
 // 路由配置

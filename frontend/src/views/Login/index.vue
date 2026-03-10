@@ -197,7 +197,7 @@ const handleLogin = async () => {
       console.log('开始获取完整用户信息...')
       try {
         // 查询personnel表获取完整信息
-        const queryUrl = `/api/v1/resource/personnel?employee_id=${loginForm.username}`
+        const queryUrl = `v1/resource/personnel?employee_id=${loginForm.username}`
         console.log('🔍 查询URL:', queryUrl)
         
         const personnelResponse = await fetch(queryUrl, {
@@ -251,7 +251,7 @@ const handleLogin = async () => {
             console.log('⚠️ 尝试模糊搜索...')
             
             // 尝试模糊搜索
-            const fuzzyResponse = await fetch(`/api/v1/resource/personnel?name=${loginForm.username}`, {
+            const fuzzyResponse = await fetch(`v1/resource/personnel?name=${loginForm.username}`, {
               headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

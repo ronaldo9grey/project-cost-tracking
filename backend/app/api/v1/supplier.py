@@ -4,6 +4,7 @@ from sqlalchemy import func, desc
 from typing import List, Optional
 from datetime import date
 from app.core.dependencies import get_db
+from app.core.config import settings
 from app.models.supplier import Supplier, SupplierEvaluation, SupplierRanking, SupplierAIAnalysis
 
 router = APIRouter()
@@ -773,7 +774,6 @@ def generate_ai_analysis(db: Session = Depends(get_db)):
         import json
         from datetime import datetime
         
-        DEEPSEEK_API_KEY = "sk-8d9cab2969fa432da8a919e6fdf6fe63"
         DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
         
         supplier_ranking_list_json = '''{
@@ -827,7 +827,7 @@ def generate_ai_analysis(db: Session = Depends(get_db)):
         
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {DEEPSEEK_API_KEY}"
+            "Authorization": f"Bearer {settings.DEEPSEEK_API_KEY}"
         }
         
         payload = {

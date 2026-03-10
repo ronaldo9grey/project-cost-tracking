@@ -359,7 +359,7 @@ const handleDownload = async () => {
   
   downloading.value = true
   try {
-    const response = await fetch(`/api/v1/daily-reports/attachments/${attachmentId.value}/download`, {
+    const response = await fetch(`v1/daily-reports/attachments/${attachmentId.value}/download`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }

@@ -404,7 +404,7 @@ const reLoginIfNeeded = async () => {
     formData.append('username', username)
     formData.append('password', password)
     
-    const loginResponse = await fetch('/api/v1/auth/login', {
+    const loginResponse = await fetch('/project/api/v1/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'

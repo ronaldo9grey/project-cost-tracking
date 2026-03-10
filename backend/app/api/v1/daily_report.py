@@ -56,7 +56,7 @@ def read_my_tasks(
 ):
     tasks = get_my_tasks(
         db,
-        employee_id=str(current_user.id),  # 使用人员主键ID查询assignee_id字段
+        employee_id=current_user.employee_id,  # 使用employee_id查询assignee_id字段
         status=status,
         keyword=keyword
     )

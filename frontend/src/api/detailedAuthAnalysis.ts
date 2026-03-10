@@ -40,7 +40,7 @@ export const detailedAuthAnalysis = async () => {
     // 测试列表API
     try {
       console.log('  测试列表API...')
-      const listResponse = await fetch('/api/v1/daily-report/legacy/my-reports', {
+      const listResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -60,7 +60,7 @@ export const detailedAuthAnalysis = async () => {
     // 测试任务API
     try {
       console.log('  测试任务API...')
-      const tasksResponse = await fetch('/api/v1/daily-report/legacy/my-tasks', {
+      const tasksResponse = await fetch('/project/api/v1/daily-report/legacy/my-tasks', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -80,7 +80,7 @@ export const detailedAuthAnalysis = async () => {
     // 测试详情API
     try {
       console.log('  测试详情API (ID: 10)...')
-      const detailResponse = await fetch('/api/v1/daily-report/legacy/my-reports/10/', {
+      const detailResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports/10/', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

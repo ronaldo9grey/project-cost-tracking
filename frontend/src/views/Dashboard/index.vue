@@ -470,7 +470,7 @@ const navigateToProjects = () => {
 // 获取人员工作量数据
 const fetchEmployeeWorkload = async () => {
   try {
-    const data = await request.get('/api/v1/cost/labor/workload')
+    const data = await request.get('v1/cost/labor/workload')
     console.log('人员工作量原始数据:', data)
     console.log('数据类型:', typeof data, Array.isArray(data))
     

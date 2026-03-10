@@ -9,8 +9,8 @@ const CACHE_EXPIRY = 5 * 60 * 1000
 const MAX_RETRIES = 3
 
 const service = axios.create({
-  baseURL: '/',  // 基础路径，通过Vite代理
-  timeout: 60000,  // 增加到60秒超时
+  baseURL: '/project/api/',  // 绝对路径，配合 vite base: '/project/'
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
@@ -215,7 +215,7 @@ export const login = (params: { username: string; password: string }) => {
   formData.append('username', params.username)
   formData.append('password', params.password)
   console.log('发送登录请求:', params.username)
-  return service.post('/api/v1/auth/login', formData, {
+  return service.post('v1/auth/login', formData, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
   })
 }

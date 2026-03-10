@@ -30,6 +30,10 @@
             <el-icon><TrendCharts /></el-icon>
             <span>日报分析</span>
           </el-menu-item>
+          <el-menu-item index="/monthly-goals">
+            <el-icon><Aim /></el-icon>
+            <span>目标管理</span>
+          </el-menu-item>
           
           <!-- 项目系统 -->
           <el-menu-item index="/dashboard">
@@ -73,7 +77,7 @@
           <div class="header-right">
             <el-dropdown @command="handleCommand">
               <span class="user-info">
-                <el-avatar :size="32" src="/gcs.png" />
+                <el-avatar :size="32" src="./gcs.png" />
                 <span>{{ userInfo.name || userInfo.employee_id || userInfo.username || '用户' }}</span>
                 <el-icon class="el-icon--right"><ArrowDown /></el-icon>
               </span>
@@ -176,7 +180,8 @@ import {
   UserFilled,
   CreditCard,
   Tools,
-  TrendCharts
+  TrendCharts,
+  Aim
 } from '@element-plus/icons-vue'
 import { getToken, removeToken } from './api/axios'
 import { changePassword } from './api/Auth'
@@ -473,7 +478,7 @@ const loadPersonnelDetail = async () => {
       username: userInfo.username
     })
     
-    const response = await fetch(`/api/v1/resource/personnel?limit=1&name=${userInfo.username}`, {
+    const response = await fetch(`/project/api/v1/resource/personnel?limit=1&name=${userInfo.username}`, {
       headers: {
         'Authorization': `Bearer ${getToken()}`,
         'Content-Type': 'application/json'

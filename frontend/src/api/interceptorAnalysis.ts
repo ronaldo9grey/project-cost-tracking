@@ -20,9 +20,9 @@ export const interceptorAnalysis = async () => {
     // 直接调用编辑页面使用的API
     const reportId = 12  // 使用实际的日报ID
     
-    console.log('调用API:', `/api/v1/daily-report/legacy/my-reports/${reportId}/`)
+    console.log('调用API:', `v1/daily-report/legacy/my-reports/${reportId}/`)
     
-    const response = await fetch(`/api/v1/daily-report/legacy/my-reports/${reportId}/`, {
+    const response = await fetch(`v1/daily-report/legacy/my-reports/${reportId}/`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -83,7 +83,7 @@ export const interceptorAnalysis = async () => {
   console.log('\n4.2 使用代理转发测试...')
   try {
     // 测试代理是否正常工作
-    const proxyResponse = await fetch('/api/v1/daily-report/legacy/my-reports', {
+    const proxyResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports', {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'

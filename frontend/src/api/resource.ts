@@ -44,7 +44,7 @@ export interface PersonnelUpdate {
  * @param params 查询参数
  */
 export const getPersonnel = (params?: { skip?: number; limit?: number; name?: string; employee_id?: string; department?: string }) => {
-  return request.get<Personnel[]>('/api/v1/resource/personnel', { params })
+  return request.get<Personnel[]>('v1/resource/personnel', { params })
 }
 
 /**
@@ -52,7 +52,7 @@ export const getPersonnel = (params?: { skip?: number; limit?: number; name?: st
  * @param personnel 人员信息
  */
 export const createPersonnel = (personnel: PersonnelCreate) => {
-  return request.post<Personnel>('/api/v1/resource/personnel/', personnel)
+  return request.post<Personnel>('v1/resource/personnel/', personnel)
 }
 
 /**
@@ -115,7 +115,7 @@ export interface EquipmentUpdate {
  * @param params 查询参数
  */
 export const getEquipment = (params?: { skip?: number; limit?: number; status?: string }) => {
-  return request.get<Equipment[]>('/api/v1/resource/equipment/', { params })
+  return request.get<Equipment[]>('v1/resource/equipment/', { params })
 }
 
 /**
@@ -123,7 +123,7 @@ export const getEquipment = (params?: { skip?: number; limit?: number; status?: 
  * @param equipment 设备信息
  */
 export const createEquipment = (equipment: EquipmentCreate) => {
-  return request.post<Equipment>('/api/v1/resource/equipment/', equipment)
+  return request.post<Equipment>('v1/resource/equipment/', equipment)
 }
 
 /**
@@ -182,7 +182,7 @@ export interface MaterialUpdate {
  * @param params 查询参数
  */
 export const getMaterials = (params?: { skip?: number; limit?: number; material_name?: string; supplier?: string }) => {
-  return request.get<Material[]>('/api/v1/resource/materials/', { params })
+  return request.get<Material[]>('v1/resource/materials/', { params })
 }
 
 /**
@@ -190,7 +190,7 @@ export const getMaterials = (params?: { skip?: number; limit?: number; material_
  * @param material 物料信息
  */
 export const createMaterial = (material: MaterialCreate) => {
-  return request.post<Material>('/api/v1/resource/materials/', material)
+  return request.post<Material>('v1/resource/materials/', material)
 }
 
 /**
@@ -235,7 +235,7 @@ export interface IndirectCostTypeUpdate {
  * @param params 查询参数
  */
 export const getIndirectCostTypes = (params?: { skip?: number; limit?: number; type_name?: string }) => {
-  return request.get<IndirectCostType[]>('/api/v1/resource/indirect-cost-types/', { params })
+  return request.get<IndirectCostType[]>('v1/resource/indirect-cost-types/', { params })
 }
 
 /**
@@ -243,7 +243,7 @@ export const getIndirectCostTypes = (params?: { skip?: number; limit?: number; t
  * @param costType 成本类型信息
  */
 export const createIndirectCostType = (costType: IndirectCostTypeCreate) => {
-  return request.post<IndirectCostType>('/api/v1/resource/indirect-cost-types/', costType)
+  return request.post<IndirectCostType>('v1/resource/indirect-cost-types/', costType)
 }
 
 /**
@@ -342,63 +342,63 @@ export interface CreateGroupSupervisor {
  * 获取所有分组信息
  */
 export const getEmployeeGroupRelations = () => {
-  return request.get<EmployeeGroupRelation[]>('/api/v1/resource/employee-group-relations')
+  return request.get<EmployeeGroupRelation[]>('v1/resource/employee-group-relations')
 }
 
 /**
  * 创建空分组
  */
 export const createEmptyGroup = (data: { group_name: string; group_description: string }) => {
-  return request.post('/api/v1/resource/groups', data)
+  return request.post('v1/resource/groups', data)
 }
 
 /**
  * 创建分组（添加第一个成员时自动创建分组）
  */
 export const createGroupMember = (data: CreateGroupMember) => {
-  return request.post<EmployeeGroupRelation>('/api/v1/resource/group-members', data)
+  return request.post<EmployeeGroupRelation>('v1/resource/group-members', data)
 }
 
 /**
  * 创建分组上级
  */
 export const createGroupSupervisor = (data: CreateGroupSupervisor) => {
-  return request.post<EmployeeGroupRelation>('/api/v1/resource/group-supervisors', data)
+  return request.post<EmployeeGroupRelation>('v1/resource/group-supervisors', data)
 }
 
 /**
  * 删除分组关系记录
  */
 export const deleteGroupRelation = (id: number) => {
-  return request.delete(`/api/v1/resource/group-relations/${id}`)
+  return request.delete(`v1/resource/group-relations/${id}`)
 }
 
 /**
  * 批量删除分组关系记录
  */
 export const batchDeleteGroupRelations = (ids: number[]) => {
-  return request.delete('/api/v1/resource/group-relations/batch', { data: { ids } })
+  return request.delete('v1/resource/group-relations/batch', { data: { ids } })
 }
 
 /**
  * 更新分组描述
  */
 export const updateGroupDescription = (groupName: string, description: string) => {
-  return request.put(`/api/v1/resource/groups/${encodeURIComponent(groupName)}/description`, { description })
+  return request.put(`v1/resource/groups/${encodeURIComponent(groupName)}/description`, { description })
 }
 
 /**
  * 更新员工分组关系（主要用于设置主上级）
  */
 export const updateEmployeeGroupRelation = (id: number, data: { is_primary?: boolean; supervisor_position?: string }) => {
-  return request.put(`/api/v1/resource/group-relations/${id}`, data)
+  return request.put(`v1/resource/group-relations/${id}`, data)
 }
 
 /**
  * 删除整个分组（删除所有相关记录）
  */
 export const deleteEntireGroup = (groupName: string) => {
-  return request.delete(`/api/v1/resource/groups/${encodeURIComponent(groupName)}`)
+  return request.delete(`v1/resource/groups/${encodeURIComponent(groupName)}`)
 }
 
 /**
@@ -406,7 +406,7 @@ export const deleteEntireGroup = (groupName: string) => {
  * @param params 查询参数
  */
 export const getOutsourcingServiceTypes = (params?: { skip?: number; limit?: number; type_name?: string }) => {
-  return request.get<OutsourcingServiceType[]>('/api/v1/resource/outsourcing-service-types/', { params })
+  return request.get<OutsourcingServiceType[]>('v1/resource/outsourcing-service-types/', { params })
 }
 
 /**
@@ -414,7 +414,7 @@ export const getOutsourcingServiceTypes = (params?: { skip?: number; limit?: num
  * @param serviceType 服务类型信息
  */
 export const createOutsourcingServiceType = (serviceType: OutsourcingServiceTypeCreate) => {
-  return request.post<OutsourcingServiceType>('/api/v1/resource/outsourcing-service-types/', serviceType)
+  return request.post<OutsourcingServiceType>('v1/resource/outsourcing-service-types/', serviceType)
 }
 
 /**

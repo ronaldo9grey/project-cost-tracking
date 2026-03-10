@@ -28,7 +28,7 @@ export const editPageTokenTest = async () => {
   // 2.1 加载任务列表
   console.log('2.1 加载任务列表...')
   try {
-    const tasksResponse = await fetch('/api/v1/daily-report/legacy/my-tasks', {
+    const tasksResponse = await fetch('/project/api/v1/daily-report/legacy/my-tasks', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -51,7 +51,7 @@ export const editPageTokenTest = async () => {
   console.log('\n2.2 加载日报详情...')
   try {
     console.log('调用详情API，ID: 12...')
-    const reportResponse = await fetch('/api/v1/daily-report/legacy/my-reports/12/', {
+    const reportResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports/12/', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,

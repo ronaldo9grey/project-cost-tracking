@@ -52,7 +52,7 @@ export const ultimateSolution = {
       console.log('axios请求失败，尝试备用方法:', axiosError.message)
       
       // 失败时使用备用方法
-      const url = `/api/v1/daily-report/legacy/my-reports/${reportId}/`
+      const url = `v1/daily-report/legacy/my-reports/${reportId}/`
       const result = await ultimateSolution.directRequest(url)
       console.log('备用方法成功:', result.id)
       return result

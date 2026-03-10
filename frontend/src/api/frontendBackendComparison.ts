@@ -13,7 +13,7 @@ export const frontendBackendComparison = async () => {
   // 1. 模拟后端请求方式
   console.log('1. 模拟后端请求方式...')
   try {
-    const response = await fetch('/api/v1/daily-report/legacy/my-reports/12/', {
+    const response = await fetch('/project/api/v1/daily-report/legacy/my-reports/12/', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -53,7 +53,7 @@ export const frontendBackendComparison = async () => {
   
   // 直接测试API路径
   try {
-    const directResponse = await fetch('/api/v1/daily-report/legacy/my-reports/12/', {
+    const directResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports/12/', {
       headers: {
         'Authorization': `Bearer ${token}`
       }

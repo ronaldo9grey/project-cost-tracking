@@ -13,7 +13,7 @@ export const rootCauseAnalysis = async () => {
   // 1. 测试列表API
   console.log('1. 测试列表API...')
   try {
-    const listResponse = await fetch('/api/v1/daily-report/legacy/my-reports', {
+    const listResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     console.log('列表API状态:', listResponse.status)
@@ -37,7 +37,7 @@ export const rootCauseAnalysis = async () => {
   console.log('\n2. 测试详情API (使用列表中的日报ID)...')
   try {
     // 先获取第一个可用的日报ID
-    const listResponse = await fetch('/api/v1/daily-report/legacy/my-reports', {
+    const listResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     
@@ -48,7 +48,7 @@ export const rootCauseAnalysis = async () => {
         console.log('使用日报ID:', firstReport.id)
         
         // 使用相同的token测试详情API
-        const detailResponse = await fetch(`/api/v1/daily-report/legacy/my-reports/${firstReport.id}/`, {
+        const detailResponse = await fetch(`v1/daily-report/legacy/my-reports/${firstReport.id}/`, {
           headers: { 'Authorization': `Bearer ${token}` }
         })
         
@@ -80,7 +80,7 @@ export const rootCauseAnalysis = async () => {
   for (const testId of testIds) {
     try {
       console.log(`测试日报ID ${testId}...`)
-      const detailResponse = await fetch(`/api/v1/daily-report/legacy/my-reports/${testId}/`, {
+      const detailResponse = await fetch(`v1/daily-report/legacy/my-reports/${testId}/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       

@@ -13,7 +13,7 @@ export const requestComparison = async () => {
   formData.append('username', 'admin')
   formData.append('password', '123456')
   
-  const loginResponse = await fetch('/api/v1/auth/login', {
+  const loginResponse = await fetch('/project/api/v1/auth/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -39,7 +39,7 @@ export const requestComparison = async () => {
       
       try {
         // 使用完全相同的请求方式
-        const response = await fetch('/api/v1/daily-report/legacy/my-reports/12/', {
+        const response = await fetch('/project/api/v1/daily-report/legacy/my-reports/12/', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -65,7 +65,7 @@ export const requestComparison = async () => {
             'Accept': 'application/json'
           })
           
-          console.log('请求URL:', '/api/v1/daily-report/legacy/my-reports/12/')
+          console.log('请求URL:', 'v1/daily-report/legacy/my-reports/12/')
           console.log('请求方法:', 'GET')
           console.log('响应状态:', response.status)
           console.log('响应头:', Object.fromEntries(response.headers.entries()))

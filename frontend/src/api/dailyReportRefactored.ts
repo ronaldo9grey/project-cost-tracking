@@ -74,7 +74,7 @@ export interface RefactoredDailyReportCreate {
  * 获取我的任务列表
  */
 export const getMyTasks = (params?: { status?: string; keyword?: string }) => {
-  return request.get('/api/v1/daily-report/legacy/my-tasks', { params }).then(response => {
+  return request.get('v1/daily-report/legacy/my-tasks', { params }).then(response => {
     return Array.isArray(response) ? response : []
   })
 }
@@ -90,96 +90,96 @@ export const getMyReports = (params?: {
   page?: number
   size?: number
 }) => {
-  return request.get('/api/v1/daily-report/my-reports', { params })
+  return request.get('v1/daily-report/my-reports', { params })
 }
 
 /**
  * 创建重构版日报
  */
 export const createRefactoredDailyReport = (report: RefactoredDailyReportCreate) => {
-  return request.post<RefactoredDailyReport>('/api/v1/daily-report/v2/reports', report)
+  return request.post<RefactoredDailyReport>('v1/daily-report/v2/reports', report)
 }
 
 /**
  * 更新重构版日报
  */
 export const updateRefactoredDailyReport = (reportId: number, report: Partial<RefactoredDailyReportCreate>) => {
-  return request.put<RefactoredDailyReport>(`/api/v1/daily-report/v2/reports/${reportId}`, report)
+  return request.put<RefactoredDailyReport>(`v1/daily-report/v2/reports/${reportId}`, report)
 }
 
 /**
  * 获取重构版日报详情
  */
 export const getRefactoredDailyReport = (reportId: number) => {
-  return request.get<RefactoredDailyReport>(`/api/v1/daily-report/v2/reports/${reportId}`)
+  return request.get<RefactoredDailyReport>(`v1/daily-report/v2/reports/${reportId}`)
 }
 
 /**
  * 提交重构版日报
  */
 export const submitRefactoredDailyReport = (reportId: number) => {
-  return request.post<RefactoredDailyReport>(`/api/v1/daily-report/v2/reports/${reportId}/submit`)
+  return request.post<RefactoredDailyReport>(`v1/daily-report/v2/reports/${reportId}/submit`)
 }
 
 /**
  * 添加工作事项
  */
 export const addWorkItem = (reportId: number, workItem: WorkItem) => {
-  return request.post(`/api/v1/daily-report/refactored/${reportId}/work-items`, workItem)
+  return request.post(`v1/daily-report/refactored/${reportId}/work-items`, workItem)
 }
 
 /**
  * 更新工作事项
  */
 export const updateWorkItem = (reportId: number, workItemId: number, workItem: WorkItem) => {
-  return request.put(`/api/v1/daily-report/refactored/${reportId}/work-items/${workItemId}`, workItem)
+  return request.put(`v1/daily-report/refactored/${reportId}/work-items/${workItemId}`, workItem)
 }
 
 /**
  * 删除工作事项
  */
 export const deleteWorkItem = (reportId: number, workItemId: number) => {
-  return request.delete(`/api/v1/daily-report/refactored/${reportId}/work-items/${workItemId}`)
+  return request.delete(`v1/daily-report/refactored/${reportId}/work-items/${workItemId}`)
 }
 
 /**
  * 添加评价
  */
 export const addEvaluation = (reportId: number, evaluation: Evaluation) => {
-  return request.post(`/api/v1/daily-report/refactored/${reportId}/evaluations`, evaluation)
+  return request.post(`v1/daily-report/refactored/${reportId}/evaluations`, evaluation)
 }
 
 /**
  * 更新评价
  */
 export const updateEvaluation = (reportId: number, evaluationId: number, evaluation: Evaluation) => {
-  return request.put(`/api/v1/daily-report/refactored/${reportId}/evaluations/${evaluationId}`, evaluation)
+  return request.put(`v1/daily-report/refactored/${reportId}/evaluations/${evaluationId}`, evaluation)
 }
 
 /**
  * 删除评价
  */
 export const deleteEvaluation = (reportId: number, evaluationId: number) => {
-  return request.delete(`/api/v1/daily-report/refactored/${reportId}/evaluations/${evaluationId}`)
+  return request.delete(`v1/daily-report/refactored/${reportId}/evaluations/${evaluationId}`)
 }
 
 // 保持向后兼容的原有API
 export const getDailyReport = (reportId: number) => {
-  return request.get(`/api/v1/daily-report/my-reports/${reportId}/`)
+  return request.get(`v1/daily-report/my-reports/${reportId}/`)
 }
 
 export const createDailyReport = (report: any) => {
-  return request.post('/api/v1/daily-report/my-reports', report)
+  return request.post('v1/daily-report/my-reports', report)
 }
 
 export const updateDailyReport = (reportId: number, report: any) => {
-  return request.put(`/api/v1/daily-report/my-reports/${reportId}/`, report)
+  return request.put(`v1/daily-report/my-reports/${reportId}/`, report)
 }
 
 export const submitDailyReport = (reportId: number) => {
-  return request.post(`/api/v1/daily-report/my-reports/${reportId}/submit`)
+  return request.post(`v1/daily-report/my-reports/${reportId}/submit`)
 }
 
 export const deleteDailyReport = (reportId: number) => {
-  return request.delete(`/api/v1/daily-report/my-reports/${reportId}/`)
+  return request.delete(`v1/daily-report/my-reports/${reportId}/`)
 }

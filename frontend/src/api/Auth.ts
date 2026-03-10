@@ -27,21 +27,21 @@ export const login = (params: LoginParams) => {
   formData.append('username', params.username)
   formData.append('password', params.password)
   console.log('发送登录请求:', params.username)
-  return request.post('/api/v1/auth/login', formData, {
+  return request.post('v1/auth/login', formData, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
   })
 }
 
 export const getUserInfo = () => {
-  return request.get<UserInfo>('/api/v1/auth/users/me')
+  return request.get<UserInfo>('v1/auth/users/me')
 }
 
 export const logout = () => {
-  return request.post('/api/v1/auth/logout')
+  return request.post('v1/auth/logout')
 }
 
 export const refreshToken = () => {
-  return request.post<LoginResponse>('/api/v1/auth/refresh')
+  return request.post<LoginResponse>('v1/auth/refresh')
 }
 
 export interface ChangePasswordParams {
@@ -51,7 +51,7 @@ export interface ChangePasswordParams {
 }
 
 export const changePassword = (params: ChangePasswordParams) => {
-  return request.post('/api/v1/auth/change-password', params)
+  return request.post('v1/auth/change-password', params)
 }
 
 // Token管理

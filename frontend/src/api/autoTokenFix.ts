@@ -20,7 +20,7 @@ export const autoTokenFix = async () => {
     formData.append('username', 'admin')
     formData.append('password', '123456')
     
-    const loginResponse = await fetch('/api/v1/auth/login', {
+    const loginResponse = await fetch('/project/api/v1/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formData
@@ -54,7 +54,7 @@ export const autoTokenFix = async () => {
         
         // 6. 立即测试新token
         console.log('5. 立即测试新token...')
-        const testResponse = await fetch('/api/v1/daily-report/legacy/my-reports/12/', {
+        const testResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports/12/', {
           headers: {
             'Authorization': `Bearer ${newToken}`,
             'Content-Type': 'application/json'

@@ -8,12 +8,31 @@ from app.core.exceptions import NotFoundException
 from app.core.utils import calculate_project_status, get_project_actual_end_date
 from app.models.project import Project
 from app.models.project_task import ProjectTask
+from app.models.project_document import ProjectDocument
 
 from app.schemas.project import ProjectCreate, ProjectUpdate, ProjectResponse, TaskCreate, TaskUpdate, TaskResponse
 from app.schemas.response import SuccessResponse, PaginationResponse
 from app.crud.project import get_project_list, get_all_projects
 
 router = APIRouter()
+
+
+def get_project_documents(db: Session, project_id: int):
+    """获取项目文档列表"""
+    from app.models.project_document import ProjectDocument
+    return db.query(ProjectDocument).filter(
+        ProjectDocument.project_id == project_id
+    ).all()
+
+
+def create_project_document(db: Session, document: dict):
+    """创建项目文档"""
+    from app.models.project_document import ProjectDocument
+    db_document = ProjectDocument(**document)
+    db.add(db_document)
+    db.commit()
+    db.refresh(db_document)
+    return db_document
 
 
 # 首先定义精确匹配的路由，避免被动态路由覆盖
@@ -728,16 +747,17 @@ def get_project_documents_api(
     # 获取项目文档列表
     documents = get_project_documents(db=db, project_id=project_id)
     
-    # 转换为字典格式返回（匹配project_task_attachments表结构）
+    # 转换为字典格式返回
     documents_dict_list = []
     for doc in documents:
         doc_dict = {
-            "id": doc.attachment_id,  # 使用attachment_id作为文档ID
-            "document_name": doc.file_name,  # 使用file_name作为文档名称
-            "document_type": "附件",  # 固定类型为"附件"
-            "file_path": doc.file_data,  # 使用file_data作为文件路径
+            "id": doc.id,
+            "document_name": doc.document_name,
+            "document_type": doc.document_type,
+            "file_path": doc.document_path,
             "file_size": doc.file_size,
-            "task_id": doc.task_id,  # 添加任务ID
+            "description": doc.description,
+            "uploaded_by": doc.uploaded_by,
             "created_at": doc.created_at,
             "updated_at": doc.updated_at
         }
@@ -763,14 +783,15 @@ def create_project_document_api(
     # 创建文档记录
     document = create_project_document(db=db, document=document_data)
     
-    # 转换为字典格式返回（匹配project_task_attachments表结构）
+    # 转换为字典格式返回
     document_dict = {
-        "id": document.attachment_id,
-        "document_name": document.file_name,
-        "document_type": "附件",
-        "file_path": document.file_data,
+        "id": document.id,
+        "document_name": document.document_name,
+        "document_type": document.document_type,
+        "file_path": document.document_path,
         "file_size": document.file_size,
-        "task_id": document.task_id,
+        "description": document.description,
+        "uploaded_by": document.uploaded_by,
         "created_at": document.created_at,
         "updated_at": document.updated_at
     }

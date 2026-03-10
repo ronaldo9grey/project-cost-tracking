@@ -7,6 +7,7 @@ from decimal import Decimal
 import requests
 
 from app.core.dependencies import get_db
+from app.core.config import settings
 from app.models.project import Project
 from app.models.project_task import ProjectTask
 from app.models.material_cost import MaterialCost
@@ -17,7 +18,6 @@ from app.models.supplier import SupplierEvaluation
 
 router = APIRouter()
 
-DEEPSEEK_API_KEY = "sk-8d9cab2969fa432da8a919e6fdf6fe63"
 DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
 
 def format_datetime(dt):
@@ -212,7 +212,7 @@ def chat_with_ai(request: dict):
         
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {DEEPSEEK_API_KEY}"
+            "Authorization": f"Bearer {settings.DEEPSEEK_API_KEY}"
         }
         
         payload = {

@@ -37,7 +37,7 @@ export const frontendTokenDebug = async () => {
   
   try {
     console.log('调用列表API...')
-    const listResponse = await fetch('/api/v1/daily-report/legacy/my-reports', {
+    const listResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports', {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -53,7 +53,7 @@ export const frontendTokenDebug = async () => {
     }
     
     console.log('调用详情API...')
-    const detailResponse = await fetch('/api/v1/daily-report/legacy/my-reports/12/', {
+    const detailResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports/12/', {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -82,7 +82,7 @@ export const frontendTokenDebug = async () => {
     
     // 测试axios直接调用
     console.log('测试axios直接调用...')
-    const axiosResult = await axios.get('/api/v1/daily-report/legacy/my-reports/12/', {
+    const axiosResult = await axios.get('v1/daily-report/legacy/my-reports/12/', {
       headers: {
         'Authorization': `Bearer ${token}`
       }

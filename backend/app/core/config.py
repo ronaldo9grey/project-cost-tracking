@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     DEFAULT_PAGE_SIZE: int = 10
     MAX_PAGE_SIZE: int = 1000
     
+    # DeepSeek API配置
+    DEEPSEEK_API_KEY: str = ""
+    
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

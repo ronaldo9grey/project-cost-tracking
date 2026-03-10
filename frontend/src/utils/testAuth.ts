@@ -20,7 +20,7 @@ export const testSimpleAuth = async () => {
     
     console.log('2. 发送登录请求...')
     
-    const loginResponse = await axios.post('/api/v1/auth/login', formData, {
+    const loginResponse = await axios.post('v1/auth/login', formData, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
@@ -38,7 +38,7 @@ export const testSimpleAuth = async () => {
       // 4. 测试发送token的请求
       console.log('5. 测试发送token请求...')
       
-      const testResponse = await axios.get('/api/v1/daily-report/legacy/my-reports', {
+      const testResponse = await axios.get('v1/daily-report/legacy/my-reports', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

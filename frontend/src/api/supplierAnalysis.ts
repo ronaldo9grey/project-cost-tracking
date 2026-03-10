@@ -155,24 +155,24 @@ export const getSuppliers = (params?: {
   status?: number
   name?: string 
 }) => {
-  const url = '/api/v1/suppliers/' + buildQueryString(params || {})
+  const url = 'v1/suppliers/' + buildQueryString(params || {})
   return request.get<{ items: Supplier[]; total: number; page: number; size: number }>(url)
 }
 
 export const getSupplier = (id: number) => {
-  return request.get<Supplier>(`/api/v1/suppliers/${id}`)
+  return request.get<Supplier>(`v1/suppliers/${id}`)
 }
 
 export const createSupplier = (data: Partial<Supplier>) => {
-  return request.post<Supplier>('/api/v1/suppliers/', data)
+  return request.post<Supplier>('v1/suppliers/', data)
 }
 
 export const updateSupplier = (id: number, data: Partial<Supplier>) => {
-  return request.put<Supplier>(`/api/v1/suppliers/${id}`, data)
+  return request.put<Supplier>(`v1/suppliers/${id}`, data)
 }
 
 export const deleteSupplier = (id: number) => {
-  return request.delete(`/api/v1/suppliers/${id}`)
+  return request.delete(`v1/suppliers/${id}`)
 }
 
 // 供应商评价API
@@ -183,7 +183,7 @@ export const getSupplierEvaluations = (
     limit?: number
   }
 ) => {
-  const url = `/api/v1/suppliers/${supplierId}/evaluations` + buildQueryString(params || {})
+  const url = `v1/suppliers/${supplierId}/evaluations` + buildQueryString(params || {})
   return request.get<{ items: SupplierEvaluation[]; total: number }>(url)
 }
 
@@ -191,55 +191,55 @@ export const createSupplierEvaluation = (
   supplierId: number,
   data: SupplierEvaluationCreate
 ) => {
-  return request.post(`/api/v1/suppliers/${supplierId}/evaluations`, data)
+  return request.post(`v1/suppliers/${supplierId}/evaluations`, data)
 }
 
 export const updateSupplierEvaluation = (
   evaluationId: number,
   data: SupplierEvaluationUpdate
 ) => {
-  return request.put(`/api/v1/suppliers/evaluations/${evaluationId}`, data)
+  return request.put(`v1/suppliers/evaluations/${evaluationId}`, data)
 }
 
 export const deleteSupplierEvaluation = (evaluationId: number) => {
-  return request.delete(`/api/v1/suppliers/evaluations/${evaluationId}`)
+  return request.delete(`v1/suppliers/evaluations/${evaluationId}`)
 }
 
 // 供应商分析API
 export const getSupplierRanking = (limit: number = 10) => {
   return request.get<SupplierRanking[]>(
-    `/api/v1/suppliers/performance/ranking?limit=${limit}`
+    `v1/suppliers/performance/ranking?limit=${limit}`
   )
 }
 
 export const getSupplierAnalysisOverview = () => {
-  return request.get<AnalysisOverview>('/api/v1/suppliers/analysis/overview')
+  return request.get<AnalysisOverview>('v1/suppliers/analysis/overview')
 }
 
 export const getSupplierAnalysisTrend = (period: string = 'month') => {
   return request.get<{ period: string; trends: TrendData[] }>(
-    `/api/v1/suppliers/analysis/trend?period=${period}`
+    `v1/suppliers/analysis/trend?period=${period}`
   )
 }
 
 export const getSupplierAnalysisChartData = () => {
-  return request.get<ChartData>('/api/v1/suppliers/analysis/chart-data')
+  return request.get<ChartData>('v1/suppliers/analysis/chart-data')
 }
 
 export const getSupplierAnalysisComparison = (supplierIds: number[]) => {
   return request.get<ComparisonData>(
-    `/api/v1/suppliers/analysis/comparison?supplier_ids=${supplierIds.join(',')}`
+    `v1/suppliers/analysis/comparison?supplier_ids=${supplierIds.join(',')}`
   )
 }
 
 export const getSupplierAIAnalysis = (supplierId?: number) => {
-  return request.get(`/api/v1/suppliers/analysis/ai-result`)
+  return request.get(`v1/suppliers/analysis/ai-result`)
 }
 
 export const generateSupplierAIAnalysis = () => {
-  return request.post(`/api/v1/suppliers/analysis/ai-generate`)
+  return request.post(`v1/suppliers/analysis/ai-generate`)
 }
 
 export const getSupplierRankingDetail = () => {
-  return request.get<SupplierRanking[]>('/api/v1/suppliers/analysis/ranking-detail')
+  return request.get<SupplierRanking[]>('v1/suppliers/analysis/ranking-detail')
 }

@@ -39,7 +39,7 @@ export const authTokenDeepAnalysis = async () => {
   try {
     // 测试列表API
     console.log('  测试列表API...')
-    const listResponse = await fetch('/api/v1/daily-report/legacy/my-reports', {
+    const listResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports', {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -49,7 +49,7 @@ export const authTokenDeepAnalysis = async () => {
     
     // 测试详情API
     console.log('  测试详情API...')
-    const detailResponse = await fetch('/api/v1/daily-report/legacy/my-reports/12/', {
+    const detailResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports/12/', {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -78,7 +78,7 @@ export const authTokenDeepAnalysis = async () => {
     formData.append('username', 'admin')
     formData.append('password', '123456')
     
-    const loginResponse = await fetch('/api/v1/auth/login', {
+    const loginResponse = await fetch('/project/api/v1/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -100,7 +100,7 @@ export const authTokenDeepAnalysis = async () => {
         
         // 再次测试详情API
         console.log('  使用新token测试详情API...')
-        const newDetailResponse = await fetch('/api/v1/daily-report/legacy/my-reports/12/', {
+        const newDetailResponse = await fetch('/project/api/v1/daily-report/legacy/my-reports/12/', {
           headers: {
             'Authorization': `Bearer ${loginData.data.access_token}`,
             'Content-Type': 'application/json'

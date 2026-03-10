@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: '/',  // 基础路径，通过Vite代理
+  baseURL: '/project/api/',  // 绝对路径，配合 vite base: '/project/'
   timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
@@ -86,11 +86,11 @@ export const login = (params: { username: string; password: string }) => {
   formData.append('username', params.username)
   formData.append('password', params.password)
   
-  console.log('请求URL:', '/api/v1/auth/login')
+  console.log('请求URL:', 'v1/auth/login')
   console.log('请求数据:', { username: params.username, password: '***' })
   console.log('Content-Type:', 'application/x-www-form-urlencoded')
   
-  return service.post('/api/v1/auth/login', formData, {
+  return service.post('v1/auth/login', formData, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
   }).then(response => {
     console.log('✅ 登录请求成功:', response.status, response.data)

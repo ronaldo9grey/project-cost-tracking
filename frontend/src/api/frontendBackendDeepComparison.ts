@@ -14,7 +14,7 @@ export const frontendBackendDeepComparison = async () => {
     formData.append('username', 'admin')
     formData.append('password', '123456')
     
-    const loginResponse = await fetch('/api/v1/auth/login', {
+    const loginResponse = await fetch('/project/api/v1/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -40,7 +40,7 @@ export const frontendBackendDeepComparison = async () => {
   
   try {
     // 完全复制后端成功的请求方式
-    const response = await fetch('/api/v1/daily-report/legacy/my-reports/12/', {
+    const response = await fetch('/project/api/v1/daily-report/legacy/my-reports/12/', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -66,7 +66,7 @@ export const frontendBackendDeepComparison = async () => {
         'Accept': 'application/json'
       })
       
-      console.log('使用的URL:', '/api/v1/daily-report/legacy/my-reports/12/')
+      console.log('使用的URL:', 'v1/daily-report/legacy/my-reports/12/')
     }
   } catch (e) {
     console.log('❌ 后端方式异常:', e)
@@ -98,7 +98,7 @@ export const frontendBackendDeepComparison = async () => {
   
   try {
     // 直接使用原始axios实例
-    const response = await fetch('/api/v1/daily-report/legacy/my-reports/12/', {
+    const response = await fetch('/project/api/v1/daily-report/legacy/my-reports/12/', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,

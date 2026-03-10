@@ -499,7 +499,7 @@ const getDailyReportFixed = async (reportId: number) => {
   try {
     console.log('尝试获取日报数据，token:', token.substring(0, 20) + '...')
     
-    const response = await fetch(`/api/v1/daily-report/my-reports/${reportId}`, {
+    const response = await fetch(`/project/api/v1/daily-report/my-reports/${reportId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -549,7 +549,7 @@ const handleAttachments = () => {
 
 // 辅助函数：使用指定token获取数据
 const getDailyReportWithToken = async (reportId: number, token: string) => {
-  const response = await fetch(`/api/v1/daily-report/my-reports/${reportId}`, {
+  const response = await fetch(`/project/api/v1/daily-report/my-reports/${reportId}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -575,7 +575,7 @@ const reLoginIfNeeded = async (): Promise<string | null> => {
     formData.append('username', 'admin')
     formData.append('password', '123456')
     
-    const loginResponse = await fetch('/api/v1/auth/login', {
+    const loginResponse = await fetch('/project/api/v1/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formData
@@ -640,7 +640,7 @@ const getMyTasksFixed = async () => {
   try {
     console.log('尝试获取任务数据，token:', token.substring(0, 20) + '...')
     
-    const response = await fetch('/api/v1/daily-report/my-tasks', {
+    const response = await fetch('/project/api/v1/daily-report/my-tasks', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -682,7 +682,7 @@ const getMyTasksFixed = async () => {
 
 // 辅助函数：使用指定token获取任务数据
 const getMyTasksWithToken = async (token: string) => {
-  const response = await fetch('/api/v1/daily-report/my-tasks', {
+  const response = await fetch('/project/api/v1/daily-report/my-tasks', {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,

@@ -121,7 +121,7 @@ export interface ReportSummaryResponse {
 
 // 创建日清表记录
 export const createDailyTaskCompletion = (data: DailyTaskCompletionCreate): Promise<DailyTaskCompletion> => {
-  return request.post<DailyTaskCompletion>('/api/v1/daily-task-completion', data).then(response => {
+  return request.post<DailyTaskCompletion>('v1/daily-task-completion', data).then(response => {
     // 后端直接返回对象，不需要.data
     return response as any
   })
@@ -136,7 +136,7 @@ export const getDailyTaskCompletions = (params?: {
   page?: number
   size?: number
 }): Promise<DailyTaskCompletionListResponse> => {
-  return request.get<DailyTaskCompletionListResponse>('/api/v1/daily-task-completion', { params }).then(response => {
+  return request.get<DailyTaskCompletionListResponse>('v1/daily-task-completion', { params }).then(response => {
     // 后端直接返回对象，不需要.data
     return response as any
   })
@@ -144,7 +144,7 @@ export const getDailyTaskCompletions = (params?: {
 
 // 获取指定日报的日清表记录
 export const getTaskCompletionsByReport = (reportId: number): Promise<DailyTaskCompletion[]> => {
-  return request.get<DailyTaskCompletion[]>(`/api/v1/daily-task-completion/report/${reportId}`).then(response => {
+  return request.get<DailyTaskCompletion[]>(`v1/daily-task-completion/report/${reportId}`).then(response => {
     // 后端直接返回数组，不需要.data
     return response as any
   })
@@ -152,7 +152,7 @@ export const getTaskCompletionsByReport = (reportId: number): Promise<DailyTaskC
 
 // 获取日清表记录详情
 export const getDailyTaskCompletion = (taskCompletionId: number): Promise<DailyTaskCompletion> => {
-  return request.get<DailyTaskCompletion>(`/api/v1/daily-task-completion/${taskCompletionId}`).then(response => {
+  return request.get<DailyTaskCompletion>(`v1/daily-task-completion/${taskCompletionId}`).then(response => {
     // 后端直接返回对象，不需要.data
     return response as any
   })
@@ -160,7 +160,7 @@ export const getDailyTaskCompletion = (taskCompletionId: number): Promise<DailyT
 
 // 更新日清表记录
 export const updateDailyTaskCompletion = (taskCompletionId: number, data: DailyTaskCompletionUpdate): Promise<DailyTaskCompletion> => {
-  return request.put<DailyTaskCompletion>(`/api/v1/daily-task-completion/${taskCompletionId}`, data).then(response => {
+  return request.put<DailyTaskCompletion>(`v1/daily-task-completion/${taskCompletionId}`, data).then(response => {
     // 后端直接返回对象，不需要.data
     return response as any
   })
@@ -168,7 +168,7 @@ export const updateDailyTaskCompletion = (taskCompletionId: number, data: DailyT
 
 // 删除日清表记录
 export const deleteDailyTaskCompletion = (taskCompletionId: number): Promise<{ message: string }> => {
-  return request.delete<{ message: string }>(`/api/v1/daily-task-completion/${taskCompletionId}`).then(response => {
+  return request.delete<{ message: string }>(`v1/daily-task-completion/${taskCompletionId}`).then(response => {
     // 后端直接返回对象，不需要.data
     return response as any
   })
@@ -176,7 +176,7 @@ export const deleteDailyTaskCompletion = (taskCompletionId: number): Promise<{ m
 
 // 批量创建日清表记录
 export const bulkCreateTaskCompletions = (reportId: number, taskCompletions: DailyTaskCompletionCreate[]): Promise<DailyTaskCompletion[]> => {
-  return request.post<DailyTaskCompletion[]>(`/api/v1/daily-task-completion/report/${reportId}/bulk`, taskCompletions).then(response => {
+  return request.post<DailyTaskCompletion[]>(`v1/daily-task-completion/report/${reportId}/bulk`, taskCompletions).then(response => {
     // 后端直接返回数组，不需要.data
     return response as any
   })
@@ -188,7 +188,7 @@ export const getMyTasksAvailable = (params?: {
   keyword?: string
   limit?: number
 }): Promise<MyTaskResponse> => {
-  return request.get<MyTaskResponse>('/api/v1/daily-task-completion/my-tasks/available', { params }).then(response => {
+  return request.get<MyTaskResponse>('v1/daily-task-completion/my-tasks/available', { params }).then(response => {
     // 后端直接返回对象，不需要.data
     return response as any
   })
@@ -196,7 +196,7 @@ export const getMyTasksAvailable = (params?: {
 
 // 获取日报汇总信息
 export const getReportSummary = (reportId: number): Promise<ReportSummaryResponse> => {
-  return request.get<ReportSummaryResponse>(`/api/v1/daily-task-completion/report/${reportId}/summary`).then(response => {
+  return request.get<ReportSummaryResponse>(`v1/daily-task-completion/report/${reportId}/summary`).then(response => {
     // 后端直接返回对象，不需要.data
     return response as any
   })
@@ -212,7 +212,7 @@ export const quickAddTaskCompletion = (reportId: number, quickData: {
   status?: string
   is_key_work?: boolean
 }): Promise<DailyTaskCompletion[]> => {
-  return request.post<DailyTaskCompletion[]>(`/api/v1/daily-task-completion/quick-add/${reportId}`, quickData).then(response => {
+  return request.post<DailyTaskCompletion[]>(`v1/daily-task-completion/quick-add/${reportId}`, quickData).then(response => {
     // 后端直接返回数组，不需要.data
     return response as any
   })

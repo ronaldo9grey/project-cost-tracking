@@ -82,7 +82,7 @@ export interface TaskCreate {
  * @param params 查询参数
  */
 export const getProjects = (params?: { page?: number; size?: number; status?: string; name?: string }) => {
-  return request.get<{ items: Project[]; total: number; page: number; size: number; total_pages: number }>('/api/v1/projects/', { params })
+  return request.get<{ items: Project[]; total: number; page: number; size: number; total_pages: number }>('v1/projects/', { params })
 }
 
 /**
@@ -91,7 +91,7 @@ export const getProjects = (params?: { page?: number; size?: number; status?: st
  * @param excludeId 排除的项目ID（用于编辑模式）
  */
 export const checkProjectName = (name: string, excludeId?: number) => {
-  return request.get<{ exists: boolean; message: string }>(`/api/v1/projects/check-name/${name}`, {
+  return request.get<{ exists: boolean; message: string }>(`v1/projects/check-name/${name}`, {
     params: excludeId ? { exclude_id: excludeId } : {},
     cache: false // 移除缓存，确保每次都获取最新结果
   })
@@ -102,7 +102,7 @@ export const checkProjectName = (name: string, excludeId?: number) => {
  * @param projectId 项目ID
  */
 export const getProjectDetail = (projectId: number) => {
-  return request.get<Project>(`/api/v1/projects/${projectId}/`, {
+  return request.get<Project>(`v1/projects/${projectId}/`, {
     cache: true // 添加缓存
   })
 }
@@ -112,7 +112,7 @@ export const getProjectDetail = (projectId: number) => {
  * @param project 项目信息
  */
 export const createProject = (project: ProjectCreate) => {
-  return request.post<{ id: number }>('/api/v1/projects/', project)
+  return request.post<{ id: number }>('v1/projects/', project)
 }
 
 /**
@@ -121,7 +121,7 @@ export const createProject = (project: ProjectCreate) => {
  * @param project 项目信息
  */
 export const updateProject = (projectId: number, project: ProjectUpdate) => {
-  return request.put<Project>(`/api/v1/projects/${projectId}/`, project)
+  return request.put<Project>(`v1/projects/${projectId}/`, project)
 }
 
 /**
@@ -129,7 +129,7 @@ export const updateProject = (projectId: number, project: ProjectUpdate) => {
  * @param projectId 项目ID
  */
 export const deleteProject = (projectId: number) => {
-  return request.delete(`/api/v1/projects/${projectId}/`)
+  return request.delete(`v1/projects/${projectId}/`)
 }
 
 /**
@@ -137,7 +137,7 @@ export const deleteProject = (projectId: number) => {
  * @param projectId 项目ID
  */
 export const getProjectTasks = (projectId: number) => {
-  return request.get<Task[]>(`/api/v1/projects/${projectId}/tasks/`, {
+  return request.get<Task[]>(`v1/projects/${projectId}/tasks/`, {
     cache: false // 禁用缓存，确保获取最新数据
   })
 }
@@ -146,7 +146,7 @@ export const getProjectTasks = (projectId: number) => {
  * 获取所有项目的任务列表（用于看板）
  */
 export const getAllTasks = () => {
-  return request.get<Task[]>('/api/v1/projects/tasks', {
+  return request.get<Task[]>('v1/projects/tasks', {
     cache: false // 禁用缓存，确保获取最新数据
   })
 }
@@ -157,7 +157,7 @@ export const getAllTasks = () => {
  * @param task 任务信息
  */
 export const createProjectTask = (projectId: number, task: TaskCreate) => {
-  return request.post<Task>(`/api/v1/projects/${projectId}/tasks/`, task)
+  return request.post<Task>(`v1/projects/${projectId}/tasks/`, task)
 }
 
 /**
@@ -165,7 +165,7 @@ export const createProjectTask = (projectId: number, task: TaskCreate) => {
  * @param projectId 项目ID
  */
 export const getProjectCosts = (projectId: number) => {
-  return request.get(`/api/v1/projects/${projectId}/costs/`, {
+  return request.get(`v1/projects/${projectId}/costs/`, {
     cache: false // 禁用缓存，确保获取最新数据
   })
 }
@@ -174,7 +174,7 @@ export const getProjectCosts = (projectId: number) => {
  * 获取项目概览统计
  */
 export const getProjectOverviewStatistics = () => {
-  return request.get<{ total_projects: number; status_counts: Record<string, number>; total_contract_amount: number; total_budget_cost: number; total_actual_cost: number; cost_variance: number; avg_progress: number }>(`/api/v1/projects/statistics/overview/`, {
+  return request.get<{ total_projects: number; status_counts: Record<string, number>; total_contract_amount: number; total_budget_cost: number; total_actual_cost: number; cost_variance: number; avg_progress: number }>(`v1/projects/statistics/overview`, {
     cache: true // 添加缓存
   })
 }
@@ -183,7 +183,7 @@ export const getProjectOverviewStatistics = () => {
  * 获取外包服务类型列表
  */
 export const getOutsourcingServiceTypes = () => {
-  return request.get(`/api/v1/resource/outsourcing-service-types/`, {
+  return request.get(`v1/resource/outsourcing-service-types/`, {
     cache: true // 添加缓存
   })
 }
@@ -192,7 +192,7 @@ export const getOutsourcingServiceTypes = () => {
  * 获取间接成本类型列表
  */
 export const getIndirectCostTypes = () => {
-  return request.get(`/api/v1/resource/indirect-cost-types/`, {
+  return request.get(`v1/resource/indirect-cost-types/`, {
     cache: true // 添加缓存
   })
 }
@@ -202,7 +202,7 @@ export const getIndirectCostTypes = () => {
  * @param tasks 任务列表
  */
 export const batchCreateProjectTasks = (tasks: { project_id: number; task_name: string; start_date: string; end_date: string; assignee?: string; progress?: number }[]) => {
-  return request.post(`/api/v1/projects/tasks/batch`, tasks)
+  return request.post(`v1/projects/tasks/batch`, tasks)
 }
 
 /**
@@ -210,7 +210,7 @@ export const batchCreateProjectTasks = (tasks: { project_id: number; task_name: 
  * @param attachments 附件列表
  */
 export const batchUploadTaskAttachments = (attachments: { task_id: number; file_name: string; file_url: string; file_size?: number }[]) => {
-  return request.post(`/api/v1/projects/task-attachments/batch`, attachments)
+  return request.post(`v1/projects/task-attachments/batch`, attachments)
 }
 
 /**
@@ -218,7 +218,7 @@ export const batchUploadTaskAttachments = (attachments: { task_id: number; file_
  * @param costs 成本列表
  */
 export const batchCreateMaterialCosts = (costs: { project_id: number; material_id: string; quantity: number; unit_price: number; total_cost: number; cost_date: string }[]) => {
-  return request.post(`/api/v1/cost/material/batch`, costs)
+  return request.post(`v1/cost/material/batch`, costs)
 }
 
 /**
@@ -226,7 +226,7 @@ export const batchCreateMaterialCosts = (costs: { project_id: number; material_i
  * @param costs 成本列表
  */
 export const batchCreateLaborCosts = (costs: { project_id: number; employee_id: string; work_date: string; hours: number; hourly_rate: number; total_cost: number }[]) => {
-  return request.post(`/api/v1/cost/labor/batch`, costs)
+  return request.post(`v1/cost/labor/batch`, costs)
 }
 
 /**
@@ -234,7 +234,7 @@ export const batchCreateLaborCosts = (costs: { project_id: number; employee_id: 
  * @param costs 成本列表
  */
 export const batchCreateOutsourcingCosts = (costs: { project_id: number; service_type_id: number; cost_amount: number; cost_date: string; description?: string }[]) => {
-  return request.post(`/api/v1/cost/outsourcing/batch`, costs)
+  return request.post(`v1/cost/outsourcing/batch`, costs)
 }
 
 /**
@@ -242,7 +242,7 @@ export const batchCreateOutsourcingCosts = (costs: { project_id: number; service
  * @param costs 成本列表
  */
 export const batchCreateIndirectCosts = (costs: { project_id: number; cost_type_id: number; cost_amount: number; cost_date: string; description?: string }[]) => {
-  return request.post(`/api/v1/cost/indirect/batch`, costs)
+  return request.post(`v1/cost/indirect/batch`, costs)
 }
 
 /**
@@ -251,7 +251,7 @@ export const batchCreateIndirectCosts = (costs: { project_id: number; cost_type_
  * @param taskId 任务ID
  */
 export const getTaskAttachments = (projectId: number, taskId: number) => {
-  return request.get(`/api/v1/projects/${projectId}/task-attachments/${taskId}`, {
+  return request.get(`v1/projects/${projectId}/task-attachments/${taskId}`, {
     cache: false // 禁用缓存，确保获取最新数据
   })
 }
@@ -261,7 +261,7 @@ export const getTaskAttachments = (projectId: number, taskId: number) => {
  * @param projectId 项目ID
  */
 export const getProjectDocuments = (projectId: number) => {
-  return request.get(`/api/v1/projects/${projectId}/documents/`, {
+  return request.get(`v1/projects/${projectId}/documents/`, {
     cache: false // 禁用缓存，确保获取最新数据
   })
 }
@@ -271,7 +271,7 @@ export const getProjectDocuments = (projectId: number) => {
  * @param attachments 附件列表
  */
 export const batchCreateProjectTaskAttachments = (attachments: { task_id: number; file_name: string; file_url: string; file_size?: number }[]) => {
-  return request.post(`/api/v1/projects/task-attachments/batch`, attachments)
+  return request.post(`v1/projects/task-attachments/batch`, attachments)
 }
 
 /**
@@ -280,7 +280,7 @@ export const batchCreateProjectTaskAttachments = (attachments: { task_id: number
  * @param taskId 任务ID
  */
 export const getProjectTaskAttachments = (projectId: number, taskId: number) => {
-  return request.get(`/api/v1/projects/${projectId}/task-attachments/${taskId}`, {
+  return request.get(`v1/projects/${projectId}/task-attachments/${taskId}`, {
     cache: false // 禁用缓存，确保获取最新数据
   })
 }

@@ -13,7 +13,7 @@ export const finalDiagnosis = async () => {
   // 1. 测试代理是否正常工作
   console.log('1. 测试代理是否正常工作...')
   try {
-    const proxyTest = await fetch('/api/v1/daily-report/legacy/my-reports', {
+    const proxyTest = await fetch('/project/api/v1/daily-report/legacy/my-reports', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     console.log('代理测试状态:', proxyTest.status)
@@ -24,7 +24,7 @@ export const finalDiagnosis = async () => {
       
       // 2. 使用代理测试详情API
       console.log('2. 使用代理测试详情API...')
-      const proxyDetail = await fetch('/api/v1/daily-report/legacy/my-reports/12/', {
+      const proxyDetail = await fetch('/project/api/v1/daily-report/legacy/my-reports/12/', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       console.log('代理详情状态:', proxyDetail.status)

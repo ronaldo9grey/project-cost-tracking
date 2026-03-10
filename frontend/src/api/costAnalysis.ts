@@ -137,12 +137,12 @@ function buildQueryString(params: Record<string, any>): string {
 export const getCostOverview = (projectId?: number) => {
   const params = projectId ? { project_id: projectId } : {}
   const queryString = buildQueryString(params)
-  const url = '/api/v1/cost/analysis/overview' + queryString
+  const url = 'v1/cost/analysis/overview' + queryString
   return request.get<CostOverview | CostOverview[]>(url)
 }
 
 export const getCostByCategory = (projectId: number) => {
-  const url = '/api/v1/cost/analysis/category' + buildQueryString({ project_id: projectId })
+  const url = 'v1/cost/analysis/category' + buildQueryString({ project_id: projectId })
   return request.get<{
     category_summary: CostCategorySummary
     details: CostDetail[]
@@ -155,7 +155,7 @@ export const getCostDetails = (
   skip: number = 0,
   limit: number = 50
 ) => {
-  const url = '/api/v1/cost/analysis/details' + buildQueryString({
+  const url = 'v1/cost/analysis/details' + buildQueryString({
     project_id: projectId,
     cost_type: costType,
     skip,
@@ -165,21 +165,21 @@ export const getCostDetails = (
 }
 
 export const getChartData = (projectId: number) => {
-  const url = '/api/v1/cost/analysis/chart-data' + buildQueryString({ project_id: projectId })
+  const url = 'v1/cost/analysis/chart-data' + buildQueryString({ project_id: projectId })
   return request.get<ChartData>(url)
 }
 
 export const getBudgetExecutionAnalysis = (projectId: number) => {
-  const url = '/api/v1/cost/analysis/execution-rate' + buildQueryString({ project_id: projectId })
+  const url = 'v1/cost/analysis/execution-rate' + buildQueryString({ project_id: projectId })
   return request.get<ExecutionAnalysis>(url)
 }
 
 export const getCostTrend = (projectId: number, period: string = 'month') => {
-  const url = '/api/v1/cost/analysis/trend' + buildQueryString({ project_id: projectId, period })
+  const url = 'v1/cost/analysis/trend' + buildQueryString({ project_id: projectId, period })
   return request.get<CostTrend>(url)
 }
 
 export const getProjectComparison = (projectIds: number[]) => {
-  const url = '/api/v1/cost/analysis/comparison' + buildQueryString({ project_ids: projectIds.join(',') })
+  const url = 'v1/cost/analysis/comparison' + buildQueryString({ project_ids: projectIds.join(',') })
   return request.get<ProjectComparison>(url)
 }

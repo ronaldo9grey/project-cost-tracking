@@ -1,11 +1,11 @@
 import re
+import bcrypt
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from typing import Optional
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 from app.core.config import settings
 from app.core.dependencies import get_db
@@ -18,24 +18,24 @@ router = APIRouter()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
-# 使用 bcrypt 进行密码哈希
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """验证密码（支持 bcrypt 和兼容旧版 MD5）"""
+    """验证密码（支持 bcrypt 和兼容旧版 MD5/明文）"""
     # 检查是否是 bcrypt 格式（以 $2 开头）
     if hashed_password.startswith('$2'):
-        return pwd_context.verify(plain_password, hashed_password)
+        return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+    elif hashed_password == plain_password:
+        # 兼容明文密码
+        return True
     else:
-        # 兼容旧版 MD5（迁移后删除）
+        # 兼容旧版 MD5
         import hashlib
         return hashlib.md5(plain_password.encode()).hexdigest() == hashed_password
 
 
 def get_password_hash(password: str) -> str:
     """生成 bcrypt 密码哈希"""
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt(rounds=12)).decode('utf-8')
 
 
 def validate_password_strength(password: str) -> tuple[bool, str]:

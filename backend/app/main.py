@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1 import auth, projects, cost, supplier, resource, daily_report, ai_chat, daily_report_analysis, project_tracking, daily_report_evaluation, ai_daily_report, notification, wechat_official
+from app.api.v1 import auth, projects, cost, supplier, resource, daily_report, ai_chat, daily_report_analysis, project_tracking, daily_report_evaluation, ai_daily_report, notification, wechat_official, monthly_goal
 from app.core.config import settings
 from app.core.exceptions import CustomException
 
@@ -46,6 +46,7 @@ app.include_router(ai_chat, prefix="/api/v1/ai", tags=["AI对话"])
 app.include_router(ai_daily_report, prefix="/api/v1", tags=["AI日报助手"])
 app.include_router(notification, prefix="/api/v1", tags=["通知服务"])
 app.include_router(wechat_official, prefix="/api/v1", tags=["微信公众号"])
+app.include_router(monthly_goal, prefix="/api/v1", tags=["目标管理"])
 
 # 根路径
 @app.get("/")

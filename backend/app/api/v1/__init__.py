@@ -14,6 +14,7 @@ from .daily_report_evaluation import router as daily_report_evaluation
 from .ai_daily_report import router as ai_daily_report
 from .notification import router as notification
 from .wechat_official import router as wechat_official
+from .monthly_goal import router as monthly_goal
 
 __all__ = [
     'auth',
@@ -28,5 +29,6 @@ __all__ = [
     'daily_report_evaluation',
     'ai_daily_report',
     'notification',
-    'wechat_official'
+    'wechat_official',
+    'monthly_goal'
 ]

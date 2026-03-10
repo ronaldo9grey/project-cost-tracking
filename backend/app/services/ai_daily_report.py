@@ -18,12 +18,19 @@ class AIDailyReportAssistant:
     
     def __init__(self):
         """初始化AI客户端"""
-        # 使用 Moonshot API (Kimi)
-        self.client = OpenAI(
-            api_key=os.getenv("MOONSHOT_API_KEY"),
-            base_url="https://api.moonshot.cn/v1"
-        )
-        self.model = "kimi-k2.5"
+        # 优先使用 DeepSeek API (与其他模块保持一致)
+        api_key = os.getenv("DEEPSEEK_API_KEY") or os.getenv("MOONSHOT_API_KEY") or os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            # 如果没有配置API key，设置为None，后续功能会 gracefully 降级
+            self.client = None
+            self.model = None
+        else:
+            # 使用 DeepSeek API
+            self.client = OpenAI(
+                api_key=api_key,
+                base_url="https://api.deepseek.com/v1"
+            )
+            self.model = "deepseek-chat"
     
     def generate_daily_report(
         self,
@@ -44,6 +51,14 @@ class AIDailyReportAssistant:
         Returns:
             生成的日报内容
         """
+        # 检查AI客户端是否可用
+        if not self.client:
+            return {
+                "success": False,
+                "error": "AI功能未配置，请先配置DEEPSEEK_API_KEY环境变量",
+                "content": None
+            }
+        
         # 构建提示词
         prompt = self._build_generate_prompt(user_name, projects, tasks, notes)
         
@@ -86,6 +101,13 @@ class AIDailyReportAssistant:
         Returns:
             摘要信息
         """
+        # 检查AI客户端是否可用
+        if not self.client:
+            return {
+                "success": False,
+                "error": "AI功能未配置，请先配置DEEPSEEK_API_KEY环境变量"
+            }
+        
         prompt = f"""请对以下日报内容进行摘要，提取关键信息：
 
 {report_content}
@@ -150,6 +172,13 @@ class AIDailyReportAssistant:
         Returns:
             评价建议
         """
+        # 检查AI客户端是否可用
+        if not self.client:
+            return {
+                "success": False,
+                "error": "AI功能未配置，请先配置DEEPSEEK_API_KEY环境变量"
+            }
+        
         prompt = f"""请根据以下日报内容，为上级提供评价建议：
 
 员工信息：
@@ -207,6 +236,13 @@ class AIDailyReportAssistant:
         Returns:
             趋势分析结果
         """
+        # 检查AI客户端是否可用
+        if not self.client:
+            return {
+                "success": False,
+                "error": "AI功能未配置，请先配置DEEPSEEK_API_KEY环境变量"
+            }
+        
         if not reports:
             return {
                 "success": False,

@@ -80,7 +80,7 @@ export interface DailyReportEvaluate {
 }
 
 export const getMyTasks = (params?: { status?: string; keyword?: string }) => {
-  return request.get<MyTask[]>('/api/v1/daily-report/my-tasks', { params }).then(response => {
+  return request.get<MyTask[]>('v1/daily-report/my-tasks', { params }).then(response => {
     // 后端直接返回数组，不需要.data
     return Array.isArray(response) ? response : []
   })
@@ -95,49 +95,49 @@ export const getMyReports = (params?: {
   size?: number
 }) => {
   // 真实API调用 - 连接后端数据库
-  return request.get<DailyReportListResponse>('/api/v1/daily-report/my-reports', { params })
+  return request.get<DailyReportListResponse>('v1/daily-report/my-reports', { params })
 }
 
 export const getDailyReport = (reportId: number) => {
-  return request.get<DailyReport>(`/api/v1/daily-report/my-reports/${reportId}`)
+  return request.get<DailyReport>(`v1/daily-report/my-reports/${reportId}`)
 }
 
 export const createDailyReport = (report: DailyReportCreate) => {
-  return request.post<DailyReport>('/api/v1/daily-report/my-reports', report)
+  return request.post<DailyReport>('v1/daily-report/my-reports', report)
 }
 
 // 创建包含工作事项的完整日报
 export const createDailyReportWithItems = (reportWithItems: DailyReportWithItems) => {
-  return request.post<DailyReport>('/api/v1/daily-report/my-reports/with-items', reportWithItems)
+  return request.post<DailyReport>('v1/daily-report/my-reports/with-items', reportWithItems)
 }
 
 // 更新工作事项
 export const updateWorkItems = (reportId: number, workItems: WorkItem[]) => {
-  return request.post(`/api/v1/daily-report/my-reports/${reportId}/work-items`, { work_items: workItems })
+  return request.post(`v1/daily-report/my-reports/${reportId}/work-items`, { work_items: workItems })
 }
 
 export const updateDailyReport = (reportId: number, report: Partial<DailyReportCreate>) => {
-  return request.put<DailyReport>(`/api/v1/daily-report/my-reports/${reportId}`, report)
+  return request.put<DailyReport>(`v1/daily-report/my-reports/${reportId}`, report)
 }
 
 export const submitDailyReport = (reportId: number) => {
-  return request.post<DailyReport>(`/api/v1/daily-report/my-reports/${reportId}/submit`)
+  return request.post<DailyReport>(`v1/daily-report/my-reports/${reportId}/submit`)
 }
 
 export const deleteDailyReport = (reportId: number) => {
-  return request.delete(`/api/v1/daily-report/my-reports/${reportId}`)
+  return request.delete(`v1/daily-report/my-reports/${reportId}`)
 }
 
 export const getPendingReports = (params?: { page?: number; size?: number }) => {
-  return request.get<DailyReportListResponse>('/api/v1/daily-report/pending-reports', { params })
+  return request.get<DailyReportListResponse>('v1/daily-report/pending-reports', { params })
 }
 
 export const evaluateDailyReport = (reportId: number, evaluation: DailyReportEvaluate) => {
-  return request.post<DailyReport>(`/api/v1/daily-report/pending-reports/${reportId}/evaluate`, evaluation)
+  return request.post<DailyReport>(`v1/daily-report/pending-reports/${reportId}/evaluate`, evaluation)
 }
 
 export const getSupervisorInfo = (employeeId: string) => {
-  return request.get(`/api/v1/daily-report/supervisor-info/${employeeId}`)
+  return request.get(`v1/daily-report/supervisor-info/${employeeId}`)
 }
 
 // ===== 附件管理相关API =====
@@ -157,12 +157,12 @@ export interface DailyReportAttachment {
 
 // 获取日报附件列表
 export const getDailyReportAttachments = (reportId: number) => {
-  return request.get<DailyReportAttachment[]>(`/api/v1/daily-report/attachments/${reportId}`)
+  return request.get<DailyReportAttachment[]>(`v1/daily-report/attachments/${reportId}`)
 }
 
 // 获取单个附件详情
 export const getDailyReportAttachment = (attachmentId: number) => {
-  return request.get<DailyReportAttachment>(`/api/v1/daily-report/attachment/${attachmentId}`)
+  return request.get<DailyReportAttachment>(`v1/daily-report/attachment/${attachmentId}`)
 }
 
 // 上传附件
@@ -170,7 +170,7 @@ export const uploadDailyReportAttachment = (reportId: number, file: File) => {
   const formData = new FormData()
   formData.append('file', file)
   
-  return request.post<DailyReportAttachment>(`/api/v1/daily-report/attachments/${reportId}`, formData, {
+  return request.post<DailyReportAttachment>(`v1/daily-report/attachments/${reportId}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -179,19 +179,19 @@ export const uploadDailyReportAttachment = (reportId: number, file: File) => {
 
 // 删除附件
 export const deleteDailyReportAttachment = (attachmentId: number) => {
-  return request.delete(`/api/v1/daily-report/attachments/${attachmentId}`)
+  return request.delete(`v1/daily-report/attachments/${attachmentId}`)
 }
 
 // 下载附件
 export const downloadDailyReportAttachment = (attachmentId: number) => {
-  return request.get(`/api/v1/daily-report/attachments/${attachmentId}/download`, {
+  return request.get(`v1/daily-report/attachments/${attachmentId}/download`, {
     responseType: 'blob'
   })
 }
 
 // 预览附件
 export const previewDailyReportAttachment = (attachmentId: number) => {
-  return request.get(`/api/v1/daily-report/attachments/${attachmentId}/preview`)
+  return request.get(`v1/daily-report/attachments/${attachmentId}/preview`)
 }
 
 // ===== 日报分析相关API =====
@@ -202,7 +202,7 @@ export const getAnalysisOverview = (params: {
   end_date?: string
   project_id?: string
 }) => {
-  return request.get(`/api/v1/daily-report/analysis/overview`, { params })
+  return request.get(`v1/daily-report/analysis/overview`, { params })
 }
 
 // 获取工时趋势数据
@@ -212,7 +212,7 @@ export const getHoursTrend = (params: {
   group_by?: 'day' | 'week' | 'month'
   project_id?: string
 }) => {
-  return request.get(`/api/v1/daily-report/analysis/hours-trend`, { params })
+  return request.get(`v1/daily-report/analysis/hours-trend`, { params })
 }
 
 // 获取项目工时分布数据
@@ -221,7 +221,7 @@ export const getProjectDistribution = (params: {
   end_date?: string
   limit?: number
 }) => {
-  return request.get(`/api/v1/daily-report/analysis/project-distribution`, { params })
+  return request.get(`v1/daily-report/analysis/project-distribution`, { params })
 }
 
 // 获取人员工时排名数据
@@ -231,7 +231,7 @@ export const getEmployeeRanking = (params: {
   limit?: number
   project_id?: string
 }) => {
-  return request.get(`/api/v1/daily-report/analysis/employee-ranking`, { params })
+  return request.get(`v1/daily-report/analysis/employee-ranking`, { params })
 }
 
 // 获取任务完成率分析数据
@@ -240,7 +240,7 @@ export const getTaskCompletion = (params: {
   end_date?: string
   project_id?: string
 }) => {
-  return request.get(`/api/v1/daily-report/analysis/task-completion`, { params })
+  return request.get(`v1/daily-report/analysis/task-completion`, { params })
 }
 
 // 获取评价分析数据
@@ -249,10 +249,10 @@ export const getEvaluationAnalysis = (params: {
   end_date?: string
   project_id?: string
 }) => {
-  return request.get(`/api/v1/daily-report/analysis/evaluation`, { params })
+  return request.get(`v1/daily-report/analysis/evaluation`, { params })
 }
 
 // 获取项目列表
 export const getAnalysisProjectList = () => {
-  return request.get(`/api/v1/daily-report/analysis/projects`)
+  return request.get(`v1/daily-report/analysis/projects`)
 }

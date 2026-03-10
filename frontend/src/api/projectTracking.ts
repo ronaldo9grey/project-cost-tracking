@@ -11,22 +11,22 @@ export const projectTrackingApi = {
     sort_by?: string
     sort_order?: 'asc' | 'desc'
   }) {
-    return axios.get('/api/v1/project-tracking-list', { params })
+    return axios.get('v1/project-tracking-list', { params })
   },
 
   // 获取项目跟踪详情 - 包含所有关联数据
   getProjectTrackingDetail(trackingId: number) {
-    return axios.get(`/api/v1/project-tracking/projects/${trackingId}/detail`)
+    return axios.get(`v1/project-tracking/projects/${trackingId}/detail`)
   },
 
   // 获取项目甘特图数据
   getProjectGanttData(projectId: string) {
-    return axios.get(`/api/v1/project-tracking/${projectId}/gantt`)
+    return axios.get(`v1/project-tracking/${projectId}/gantt`)
   },
 
   // 获取项目任务跟踪列表 - 基于task_trackings表
   getTaskTrackings(trackingId: number) {
-    return axios.get(`/api/v1/project-tracking/projects/${trackingId}/tasks`)
+    return axios.get(`v1/project-tracking/projects/${trackingId}/tasks`)
   },
 
   // 获取CDE评价信息 - 基于优化后的task_cde_evaluations视图
@@ -36,7 +36,7 @@ export const projectTrackingApi = {
     min_score?: number
     max_score?: number
   }) {
-    return axios.get(`/api/v1/project-tracking/projects/${trackingId}/cde-evaluations`, { params })
+    return axios.get(`v1/project-tracking/projects/${trackingId}/cde-evaluations`, { params })
   },
 
   // 获取进度趋势数据 - 用于图表展示
@@ -45,12 +45,12 @@ export const projectTrackingApi = {
     start_date?: string
     end_date?: string
   }) {
-    return axios.get(`/api/v1/project-tracking/projects/${trackingId}/progress-trend`, { params })
+    return axios.get(`v1/project-tracking/projects/${trackingId}/progress-trend`, { params })
   },
 
   // 获取风险分析数据
   getRiskAnalysis(trackingId: number) {
-    return axios.get(`/api/v1/project-tracking/projects/${trackingId}/risk-analysis`)
+    return axios.get(`v1/project-tracking/projects/${trackingId}/risk-analysis`)
   },
 
   // 更新项目跟踪状态
@@ -61,7 +61,7 @@ export const projectTrackingApi = {
     priority_level?: string
     notes?: string
   }) {
-    return axios.put(`/api/v1/project-tracking/projects/${trackingId}`, data)
+    return axios.put(`v1/project-tracking/projects/${trackingId}`, data)
   },
 
   // 更新任务跟踪状态
@@ -72,21 +72,21 @@ export const projectTrackingApi = {
     risk_level?: string
     notes?: string
   }) {
-    return axios.put(`/api/v1/project-tracking/tasks/${taskTrackingId}`, data)
+    return axios.put(`v1/project-tracking/tasks/${taskTrackingId}`, data)
   },
 
   // 手动刷新统计数据
   refreshTrackingStats(trackingId?: number) {
     if (trackingId) {
-      return axios.post(`/api/v1/project-tracking/projects/${trackingId}/refresh-stats`)
+      return axios.post(`v1/project-tracking/projects/${trackingId}/refresh-stats`)
     } else {
-      return axios.post('/api/v1/project-tracking/refresh-all-stats')
+      return axios.post('v1/project-tracking/refresh-all-stats')
     }
   },
 
   // 获取项目跟踪统计概览
   getTrackingOverview() {
-    return axios.get('/api/v1/project-tracking/overview')
+    return axios.get('v1/project-tracking/overview')
   },
 
   // 获取延迟项目列表
@@ -95,7 +95,7 @@ export const projectTrackingApi = {
     page?: number
     limit?: number
   }) {
-    return axios.get('/api/v1/project-tracking/delayed-projects', { params })
+    return axios.get('v1/project-tracking/delayed-projects', { params })
   },
 
   // 获取高风险项目列表
@@ -104,29 +104,29 @@ export const projectTrackingApi = {
     page?: number
     limit?: number
   }) {
-    return axios.get('/api/v1/project-tracking/high-risk-projects', { params })
+    return axios.get('v1/project-tracking/high-risk-projects', { params })
   },
 
   // 获取项目任务跟踪列表
   getTrackingTasks(trackingId: number) {
-    return axios.get(`/api/v1/project-tracking/project-trackings/${trackingId}/tasks`)
+    return axios.get(`v1/project-tracking/project-trackings/${trackingId}/tasks`)
   },
 
   // 获取任务关联的日报
   getTaskRelatedReports(taskId: string) {
-    return axios.get(`/api/v1/project-tracking/task-trackings/${taskId}/reports`)
+    return axios.get(`v1/project-tracking/task-trackings/${taskId}/reports`)
   },
 
   // 获取CDE评价提醒
   getCDEAlerts(trackingId: number, unreadOnly?: boolean) {
-    return axios.get(`/api/v1/project-tracking/project-trackings/${trackingId}/cde-alerts`, {
+    return axios.get(`v1/project-tracking/project-trackings/${trackingId}/cde-alerts`, {
       params: { unread_only: unreadOnly }
     })
   },
 
   // 标记通知为已读
   markNotificationRead(notificationId: number) {
-    return axios.put(`/api/v1/project-tracking/notifications/${notificationId}/read`)
+    return axios.put(`v1/project-tracking/notifications/${notificationId}/read`)
   }
 }
 
