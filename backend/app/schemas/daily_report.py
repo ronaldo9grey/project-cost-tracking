@@ -98,6 +98,9 @@ class DailyReportResponse(DailyReportBase):
     submitted_at: Optional[datetime] = None
     create_time: datetime
     update_time: datetime
+    report_mode: str = "free"  # 日报模式: free/goal
+    linked_monthly_goal_id: Optional[int] = None
+    linked_weekly_goal_id: Optional[int] = None
     work_items: List[DailyWorkItemResponse] = []
     
     class Config:
@@ -177,3 +180,51 @@ class MyTaskResponse(BaseModel):
     status: str
     progress: float
     resource_allocation: Optional[str] = None
+
+
+# ==================== 简版日报（关联目标模式）Schemas ====================
+
+class GoalLinkedWorkItemCreate(BaseModel):
+    """简版日报工作事项创建模型"""
+    work_content: str  # 主要工作事项（预填周目标内容，可编辑）
+    project_id: Optional[str] = None  # 关联项目ID（必填）
+    project_name: Optional[str] = None  # 关联项目名称
+    task_id: Optional[str] = None  # 关联任务ID
+    task_name: Optional[str] = None  # 关联任务名称
+    start_time: Optional[str] = "08:15"  # 默认开始时间
+    end_time: Optional[str] = "18:00"  # 默认结束时间
+    hours_spent: Optional[float] = 0  # 工时（根据时间自动计算）
+    result: Optional[str] = None  # 执行结果
+    evaluation: Optional[str] = None  # 自我评价
+
+
+class GoalLinkedDailyReportCreate(BaseModel):
+    """简版日报（关联目标模式）创建请求模型"""
+    report_date: date  # 日报日期
+    tomorrow_plan: str = "继续推进本周目标"  # 明日计划（默认文案）
+    planned_hours: float = 0  # 计划工时
+    # 关联目标信息
+    linked_monthly_goal_id: int  # 关联的月度目标ID
+    linked_weekly_goal_id: int  # 关联的周目标ID
+    # 工作事项列表
+    work_items: List[GoalLinkedWorkItemCreate] = []
+
+
+class CurrentWeekGoalResponse(BaseModel):
+    """本周目标响应模型（用于简版日报预填）"""
+    weekly_goal_id: int
+    weekly_goal_title: str
+    weekly_goal_content: Optional[str] = None
+    monthly_goal_id: int  # 月度目标ID
+    month: str  # 月份，如 "2026-03"
+    month_title: str  # 月度目标标题
+    week_number: int  # 周次 1-5
+    start_date: Optional[date] = None  # 周开始日期
+    end_date: Optional[date] = None  # 周结束日期
+
+
+class GoalLinkedReportResponse(DailyReportResponse):
+    """简版日报响应模型"""
+    linked_monthly_goal_id: Optional[int] = None
+    linked_weekly_goal_id: Optional[int] = None
+    weekly_goal_title: Optional[str] = None  # 周目标标题（用于展示）

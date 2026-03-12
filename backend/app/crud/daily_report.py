@@ -5,7 +5,11 @@ from datetime import date, datetime
 from app.models.daily_report import DailyReport, DailyWorkItem, DailyWorkLog
 from app.models.project import Project
 from app.models.project_task import ProjectTask
-from app.schemas.daily_report import DailyReportCreate, DailyReportUpdate, DailyWorkLogCreate, DailyReportResponse, DailyReportListResponse, DailyReportEvaluate, DailyReportWithItemsCreate
+from app.schemas.daily_report import (
+    DailyReportCreate, DailyReportUpdate, DailyWorkLogCreate, 
+    DailyReportResponse, DailyReportListResponse, DailyReportEvaluate, 
+    DailyReportWithItemsCreate, GoalLinkedDailyReportCreate
+)
 
 
 def get_daily_reports(
@@ -463,3 +467,123 @@ def get_pending_reports(
     reports = query.order_by(DailyReport.submitted_at.desc()).offset(skip).limit(limit).all()
     
     return reports, total
+
+
+def create_goal_linked_daily_report(
+    db: Session,
+    report_data: GoalLinkedDailyReportCreate,
+    employee_id: str,
+    employee_name: str,
+    weekly_goal_title: str
+) -> DailyReport:
+    """
+    创建简版日报（关联目标模式）
+    
+    Args:
+        db: 数据库会话
+        report_data: 简版日报创建数据
+        employee_id: 员工ID
+        employee_name: 员工姓名
+        weekly_goal_title: 周目标标题（用于填充工作目标字段）
+    
+    Returns:
+        创建的日报对象
+    """
+    # 创建日报主记录
+    db_report = DailyReport(
+        report_date=report_data.report_date,
+        employee_id=employee_id,
+        employee_name=employee_name,
+        work_target=weekly_goal_title,  # 周目标标题作为工作目标
+        tomorrow_plan=report_data.tomorrow_plan,
+        planned_hours=report_data.planned_hours,
+        status="待提交",
+        report_mode="goal",  # 标记为简版模式
+        linked_monthly_goal_id=report_data.linked_monthly_goal_id,
+        linked_weekly_goal_id=report_data.linked_weekly_goal_id
+    )
+    
+    db.add(db_report)
+    db.commit()
+    db.refresh(db_report)
+    
+    # 创建工作事项
+    for item_data in report_data.work_items:
+        work_item = DailyWorkItem(
+            report_id=db_report.id,
+            work_content=item_data.work_content,
+            project_id=item_data.project_id,
+            project_name=item_data.project_name,
+            task_id=item_data.task_id,
+            task_name=item_data.task_name,
+            start_time=item_data.start_time,
+            end_time=item_data.end_time,
+            hours_spent=item_data.hours_spent or 0,
+            result=item_data.result,
+            evaluation=item_data.evaluation
+        )
+        db.add(work_item)
+    
+    db.commit()
+    db.refresh(db_report)
+    return db_report
+
+
+def update_weekly_goal_progress_from_report(
+    db: Session,
+    report_id: int
+) -> bool:
+    """
+    根据日报更新周目标进度
+    
+    计算日报中所有工作事项的平均完成度，更新到关联的周目标
+    """
+    from app.models.monthly_goal import WeeklyGoal
+    
+    report = db.query(DailyReport).filter(
+        DailyReport.id == report_id,
+        DailyReport.is_deleted == False
+    ).first()
+    
+    if not report or not report.linked_weekly_goal_id:
+        return False
+    
+    # 获取工作事项的平均完成度
+    work_items = db.query(DailyWorkItem).filter(
+        DailyWorkItem.report_id == report_id,
+        DailyWorkItem.is_deleted == False
+    ).all()
+    
+    if not work_items:
+        return False
+    
+    # 计算平均进度（使用 progress_percentage 或根据 evaluation 推算）
+    total_progress = 0
+    for item in work_items:
+        if item.progress_percentage:
+            total_progress += item.progress_percentage
+        elif item.evaluation:
+            # 根据评价推算进度
+            eval_map = {"A": 100, "B": 85, "C": 70, "D": 50}
+            total_progress += eval_map.get(item.evaluation, 0)
+        else:
+            total_progress += 0
+    
+    avg_progress = total_progress / len(work_items)
+    
+    # 更新周目标进度
+    weekly_goal = db.query(WeeklyGoal).filter(
+        WeeklyGoal.id == report.linked_weekly_goal_id
+    ).first()
+    
+    if weekly_goal:
+        weekly_goal.progress_rate = avg_progress
+        # 根据进度更新状态
+        if avg_progress >= 100:
+            weekly_goal.status = "completed"
+        elif avg_progress > 0:
+            weekly_goal.status = "in_progress"
+        db.add(weekly_goal)
+        db.commit()
+    
+    return True

@@ -82,7 +82,7 @@ def create_monthly_goal(db: Session, goal: MonthlyGoalCreate, user_id: str, user
         user_name=user_name,
         month=goal.month,
         title=goal.title,
-        content=goal.description,
+        content=goal.content,
         status=goal.status or "draft",
         progress_rate=goal.progress_rate or Decimal("0")
     )

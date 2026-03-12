@@ -24,6 +24,13 @@ class DailyReport(Base):
     status = Column(String(20), default="待提交")
     submitted_at = Column(DateTime, nullable=True)
     
+    # 日报模式：free=自由填报, goal=关联目标
+    report_mode = Column(String(20), default="free")
+    
+    # 关联的目标（简版模式使用）
+    linked_monthly_goal_id = Column(Integer, nullable=True)
+    linked_weekly_goal_id = Column(Integer, nullable=True)
+    
     # 时间戳
     create_time = Column(DateTime, server_default=func.now())
     update_time = Column(DateTime, server_default=func.now(), onupdate=func.now())

@@ -22,7 +22,9 @@ from app.crud.daily_report import (
     get_my_tasks,
     get_daily_work_logs,
     create_daily_work_log,
-    get_pending_reports
+    get_pending_reports,
+    create_goal_linked_daily_report,
+    update_weekly_goal_progress_from_report
 )
 from app.crud.daily_report_attachment import (
     get_attachments_by_report_id,
@@ -41,7 +43,9 @@ from app.schemas.daily_report import (
     DailyWorkItemResponse,
     DailyWorkLogCreate,
     DailyWorkLogResponse,
-    MyTaskResponse
+    MyTaskResponse,
+    GoalLinkedDailyReportCreate,
+    CurrentWeekGoalResponse
 )
 
 router = APIRouter()
@@ -110,7 +114,8 @@ def read_my_reports(
             "status": report.status,
             "submitted_at": report.submitted_at,
             "create_time": report.create_time,
-            "update_time": report.update_time
+            "update_time": report.update_time,
+            "report_mode": report.report_mode or "free"  # 添加日报模式字段
         }
         
         converted_reports.append(report_dict)
@@ -682,3 +687,170 @@ def save_uploaded_file(file: UploadFile) -> str:
         shutil.copyfileobj(file.file, buffer)
     
     return unique_filename
+
+
+# ==================== 简版日报（关联目标模式）API ====================
+
+@router.get("/current-week-goal", response_model=CurrentWeekGoalResponse, summary="获取本周目标（用于简版日报预填）")
+def read_current_week_goal_for_report(
+    db: Session = Depends(get_db),
+    current_user: Personnel = Depends(get_current_user),
+    current_date: Optional[date] = Query(None, description="指定日期，默认为今天")
+):
+    """
+    获取当前周目标，用于简版日报自动填充
+    
+    - 根据当前日期自动判断属于第几周
+    - 返回周目标详情及关联的月度目标信息
+    """
+    from app.crud.monthly_goal import get_current_week_goal
+    from app.models.monthly_goal import MonthlyGoal, WeeklyGoal
+    
+    result = get_current_week_goal(db, current_user.employee_id, current_date)
+    
+    if not result or not result.get("weekly_goal"):
+        raise HTTPException(status_code=404, detail="未找到本周目标，请先设置月度目标")
+    
+    weekly_goal = result["weekly_goal"]
+    monthly_goal = db.query(MonthlyGoal).filter(MonthlyGoal.id == weekly_goal.goal_id).first()
+
+    return CurrentWeekGoalResponse(
+        weekly_goal_id=weekly_goal.id,
+        weekly_goal_title=weekly_goal.title,
+        weekly_goal_content=weekly_goal.content,
+        monthly_goal_id=monthly_goal.id if monthly_goal else 0,
+        month=result.get("month", ""),
+        month_title=result.get("month_title", ""),
+        week_number=result.get("week_number", 0),
+        start_date=weekly_goal.start_date,
+        end_date=weekly_goal.end_date
+    )
+
+
+@router.post("/with-goal", response_model=DailyReportResponse, summary="创建简版日报（关联目标模式）")
+def create_goal_linked_report(
+    report_data: GoalLinkedDailyReportCreate,
+    db: Session = Depends(get_db),
+    current_user: Personnel = Depends(get_current_user)
+):
+    """
+    创建简版日报（关联目标模式）
+    
+    与自由填报的区别：
+    - 自动关联月度/周目标
+    - 工作目标自动填充为周目标标题
+    - 适合目标明确的日常工作填报
+    """
+    from app.models.monthly_goal import WeeklyGoal
+    
+    # 验证周目标是否存在
+    weekly_goal = db.query(WeeklyGoal).filter(WeeklyGoal.id == report_data.linked_weekly_goal_id).first()
+    if not weekly_goal:
+        raise HTTPException(status_code=404, detail="关联的周目标不存在")
+    
+    # 验证权限
+    from app.models.monthly_goal import MonthlyGoal
+    monthly_goal = db.query(MonthlyGoal).filter(MonthlyGoal.id == report_data.linked_monthly_goal_id).first()
+    if not monthly_goal or monthly_goal.user_id != current_user.employee_id:
+        raise HTTPException(status_code=403, detail="无权使用此目标")
+    
+    # 检查当天是否已有日报
+    existing_report = db.query(DailyReport).filter(
+        DailyReport.employee_id == current_user.employee_id,
+        DailyReport.report_date == report_data.report_date,
+        DailyReport.is_deleted == False
+    ).first()
+    
+    if existing_report:
+        raise HTTPException(status_code=400, detail="当天已存在日报，无法重复创建")
+    
+    # 创建简版日报
+    db_report = create_goal_linked_daily_report(
+        db=db,
+        report_data=report_data,
+        employee_id=current_user.employee_id,
+        employee_name=current_user.name,
+        weekly_goal_title=weekly_goal.title
+    )
+    
+    # 转换为响应格式
+    report_dict = {
+        "id": db_report.id,
+        "report_date": db_report.report_date,
+        "employee_id": db_report.employee_id,
+        "employee_name": db_report.employee_name,
+        "work_target": db_report.work_target or "",
+        "key_work_tracking": db_report.key_work_tracking or "",
+        "tomorrow_plan": db_report.tomorrow_plan or "",
+        "planned_hours": float(db_report.planned_hours) if db_report.planned_hours else 0.0,
+        "status": db_report.status,
+        "submitted_at": db_report.submitted_at,
+        "create_time": db_report.create_time,
+        "update_time": db_report.update_time,
+        "report_mode": db_report.report_mode,
+        "linked_monthly_goal_id": db_report.linked_monthly_goal_id,
+        "linked_weekly_goal_id": db_report.linked_weekly_goal_id,
+        "work_items": []
+    }
+    
+    # 转换工作事项
+    if db_report.work_items:
+        for item in db_report.work_items:
+            # 处理时间字段 - 兼容字符串和datetime.time对象
+            start_time_str = item.start_time
+            end_time_str = item.end_time
+            
+            # 如果是time对象，转换为字符串
+            if hasattr(start_time_str, 'strftime'):
+                start_time_str = start_time_str.strftime('%H:%M')
+            if hasattr(end_time_str, 'strftime'):
+                end_time_str = end_time_str.strftime('%H:%M')
+            
+            work_item = {
+                "id": item.id,
+                "report_id": item.report_id,
+                "work_content": item.work_content or "",
+                "project_id": item.project_id or "",
+                "project_name": item.project_name or "",
+                "task_id": item.task_id or "",
+                "task_name": item.task_name or "",
+                "start_time": start_time_str or "",
+                "end_time": end_time_str or "",
+                "hours_spent": float(item.hours_spent) if item.hours_spent else 0.0,
+                "progress_status": item.progress_status or "正常",
+                "progress_percentage": float(item.progress_percentage) if item.progress_percentage else 0.0,
+                "delay_hours": float(item.delay_hours) if item.delay_hours else 0.0,
+                "improvement_result": item.improvement_result or "",
+                "result": item.result or "",
+                "measures": item.measures or "",
+                "evaluation": item.evaluation or ""
+            }
+            report_dict["work_items"].append(work_item)
+    
+    return report_dict
+
+
+@router.post("/{report_id}/update-goal-progress", summary="手动触发更新周目标进度")
+def trigger_update_goal_progress(
+    report_id: int,
+    db: Session = Depends(get_db),
+    current_user: Personnel = Depends(get_current_user)
+):
+    """
+    手动触发根据日报更新周目标进度
+    
+    通常在提交日报后自动调用，此接口用于手动刷新
+    """
+    db_report = get_daily_report(db, report_id)
+    if not db_report:
+        raise HTTPException(status_code=404, detail="日报未找到")
+    
+    if db_report.employee_id != current_user.employee_id:
+        raise HTTPException(status_code=403, detail="无权操作此日报")
+    
+    success = update_weekly_goal_progress_from_report(db, report_id)
+    
+    if success:
+        return {"message": "周目标进度已更新"}
+    else:
+        return {"message": "无需更新（未关联目标或无工作事项）"}

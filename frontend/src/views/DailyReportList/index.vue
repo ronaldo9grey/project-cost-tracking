@@ -18,6 +18,15 @@
       </div>
     </div>
 
+    <!-- 模式选择弹窗 -->
+    <ModeSelector
+      v-model="modeSelectorVisible"
+      :has-weekly-goal="hasWeeklyGoal"
+      @select="handleModeSelect"
+      @cancel="modeSelectorVisible = false"
+      @create-goal="handleCreateGoal"
+    />
+
     <!-- 筛选栏 -->
     <div class="filter-bar">
       <el-form :model="filterForm" inline>
@@ -70,7 +79,18 @@
           </template>
         </el-table-column>
         
-        <el-table-column prop="employee_name" label="员工" min-width="150" show-overflow-tooltip />
+        <el-table-column prop="report_mode" label="模式" width="100">
+          <template #default="{ row }">
+            <el-tag 
+              :type="row.report_mode === 'goal' ? 'success' : 'info'"
+              size="small"
+            >
+              {{ row.report_mode === 'goal' ? '关联目标' : '自由填报' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        
+        <el-table-column prop="employee_name" label="员工" min-width="120" show-overflow-tooltip />
         
         <el-table-column prop="tomorrow_plan" label="明日计划" min-width="300" show-overflow-tooltip>
           <template #default="{ row }">
@@ -214,9 +234,11 @@ import {
   getMyReports,
   deleteDailyReport,
   submitDailyReport,
+  getCurrentWeekGoal,
   type DailyReport,
   type DailyReportListResponse
 } from '../../api/dailyReport'
+import ModeSelector from '../DailyReportEdit/components/ModeSelector.vue'
 
 const router = useRouter()
 
@@ -226,6 +248,21 @@ const loading = ref(false)
 const deleteLoading = ref(false)
 const deleteDialogVisible = ref(false)
 const deleteTarget = ref<DailyReport | null>(null)
+
+// 模式选择相关
+const modeSelectorVisible = ref(false)
+const hasWeeklyGoal = ref(false)
+
+// 检查是否有本周目标
+const checkWeeklyGoal = async () => {
+  try {
+    const today = new Date().toISOString().split('T')[0]
+    await getCurrentWeekGoal(today)
+    hasWeeklyGoal.value = true
+  } catch (error) {
+    hasWeeklyGoal.value = false
+  }
+}
 
 // 获取默认日期范围 - 当月1日到月末最后一天
 const getDefaultDateRange = () => {
@@ -327,16 +364,55 @@ const loadReports = async () => {
 }
 
 // 事件处理函数
-const handleCreate = () => {
-  router.push('/daily-report/create')
+const handleCreate = async () => {
+  // 检查今天是否已有日报
+  const today = new Date().toISOString().split('T')[0]
+  const todayReport = reports.value.find(r => r.report_date === today)
+  
+  if (todayReport) {
+    ElMessage.warning('今天已经创建过日报了，请编辑现有日报')
+    // 跳转到编辑页面
+    if (todayReport.report_mode === 'goal') {
+      router.push(`/daily-report-goal/${todayReport.id}/edit`)
+    } else {
+      router.push(`/daily-report/${todayReport.id}/edit`)
+    }
+    return
+  }
+  
+  // 检查是否有本周目标
+  await checkWeeklyGoal()
+  
+  // 显示模式选择弹窗
+  modeSelectorVisible.value = true
+}
+
+// 处理模式选择
+const handleModeSelect = (mode: 'free' | 'goal') => {
+  if (mode === 'free') {
+    router.push('/daily-report/create')
+  } else {
+    router.push('/daily-report-goal/create')
+  }
+}
+
+// 处理跳转到目标制定
+const handleCreateGoal = () => {
+  router.push('/monthly-goals')
 }
 
 const handleView = (row: DailyReport) => {
+  // 两种模式查看使用同一个详情页
   router.push(`/daily-report/${row.id}/view`)
 }
 
 const handleEdit = (row: DailyReport) => {
-  router.push(`/daily-report/${row.id}/edit`)
+  // 根据日报模式跳转到对应编辑页面
+  if (row.report_mode === 'goal') {
+    router.push(`/daily-report-goal/${row.id}/edit`)
+  } else {
+    router.push(`/daily-report/${row.id}/edit`)
+  }
 }
 
 const handleSubmit = async (row: DailyReport) => {

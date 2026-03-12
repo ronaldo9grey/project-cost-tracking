@@ -140,6 +140,25 @@ export const dailyReportRoutes: RouteRecordRaw[] = [
     meta: {
       title: '日报分析调试'
     }
+  },
+
+  // 简版日报（关联目标模式）路由
+  {
+    path: '/daily-report-goal/create',
+    name: 'DailyReportGoalCreate',
+    component: () => import('../views/DailyReportEdit/GoalLinkedReportEdit.vue'),
+    meta: {
+      title: '新建日报（关联目标）'
+    }
+  },
+  {
+    path: '/daily-report-goal/:id/edit',
+    name: 'DailyReportGoalEdit',
+    component: () => import('../views/DailyReportEdit/GoalLinkedReportEdit.vue'),
+    meta: {
+      title: '编辑日报（关联目标）'
+    },
+    props: true
   }
 ]
 

@@ -27,6 +27,7 @@ export interface DailyReport {
   submitted_at: string
   create_time: string
   update_time: string
+  report_mode?: 'free' | 'goal'  // 日报模式：自由填报 / 关联目标
 }
 
 // 工作事项接口
@@ -255,4 +256,64 @@ export const getEvaluationAnalysis = (params: {
 // 获取项目列表
 export const getAnalysisProjectList = () => {
   return request.get(`v1/daily-report/analysis/projects`)
+}
+
+// ===== 简版日报（关联目标模式）相关API =====
+
+// 本周目标响应
+export interface CurrentWeekGoal {
+  weekly_goal_id: number
+  weekly_goal_title: string
+  weekly_goal_content?: string
+  month: string
+  month_title: string
+  week_number: number
+  start_date?: string
+  end_date?: string
+}
+
+// 简版日报工作事项
+export interface GoalLinkedWorkItem {
+  work_content: string
+  project_id?: string
+  project_name?: string
+  task_id?: string
+  task_name?: string
+  start_time?: string
+  end_time?: string
+  hours_spent?: number
+  result?: string
+  evaluation?: string
+}
+
+// 简版日报创建请求
+export interface GoalLinkedDailyReportCreate {
+  report_date: string
+  tomorrow_plan: string
+  planned_hours: number
+  linked_monthly_goal_id: number
+  linked_weekly_goal_id: number
+  work_items: GoalLinkedWorkItem[]
+}
+
+// 获取本周目标（用于简版日报预填）
+export const getCurrentWeekGoal = (currentDate?: string) => {
+  return request.get<CurrentWeekGoal>('v1/daily-report/current-week-goal', {
+    params: currentDate ? { current_date: currentDate } : undefined
+  })
+}
+
+// 创建简版日报（关联目标模式）
+export const createGoalLinkedReport = (reportData: GoalLinkedDailyReportCreate) => {
+  return request.post<DailyReport>('v1/daily-report/with-goal', reportData)
+}
+
+// 获取日报详情
+export const getDailyReportDetail = (reportId: number) => {
+  return request.get<DailyReport & { work_items: WorkItem[] }>(`v1/daily-report/my-reports/${reportId}`)
+}
+
+// 手动触发更新周目标进度
+export const updateGoalProgress = (reportId: number) => {
+  return request.post(`v1/daily-report/${reportId}/update-goal-progress`)
 }

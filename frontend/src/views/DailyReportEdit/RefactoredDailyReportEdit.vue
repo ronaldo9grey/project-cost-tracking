@@ -1,5 +1,14 @@
 <template>
   <div class="daily-report-container">
+    <!-- 模式选择弹窗 -->
+    <ModeSelector
+      v-model="modeSelectorVisible"
+      :has-weekly-goal="hasWeeklyGoal"
+      @select="handleModeSelect"
+      @cancel="handleModeCancel"
+      @create-goal="handleCreateGoal"
+    />
+
     <!-- 日报内容 -->
     <div class="daily-report-content">
       <div class="report-content">
@@ -471,9 +480,11 @@ import {
   getDailyReport,
   getMyReports,
   createDailyReportWithItems,
+  getCurrentWeekGoal,
   type WorkItem,
   type DailyReportCreate
 } from '../../api/dailyReport'
+import ModeSelector from './components/ModeSelector.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -709,6 +720,11 @@ const saving = ref(false)
 const submitDialogVisible = ref(false)
 const currentReportStatus = ref<string>('')
 const isReportSubmitted = ref(false) // 新增：标记日报是否已提交
+
+// 模式选择相关
+const modeSelectorVisible = ref(false)
+const hasWeeklyGoal = ref(false)
+const pendingDate = ref<string>('') // 待处理的日期
 
 // 表单数据
 const reportForm = reactive({
@@ -1007,45 +1023,25 @@ const handleDateChange = async (date: string) => {
         await loadDailyReport(reportId.value)
       }
     } else {
-      // 没有找到该日期的日报，清空表单
-      console.log(`没有找到${date}的日报，清空表单`)
-      reportId.value = 0
-      isEdit.value = false
-      isSaved.value = false
-      isReportSubmitted.value = false
+      // 没有找到该日期的日报，显示模式选择对话框
+      console.log(`没有找到${date}的日报，显示模式选择对话框`)
       
-      // 清空表单数据
-      reportForm.work_target = ''
-      reportForm.key_work_tracking = ''
-      reportForm.tomorrow_plan = ''
+      // 检查是否有本周目标
+      try {
+        await getCurrentWeekGoal(date)
+        hasWeeklyGoal.value = true
+      } catch (error) {
+        hasWeeklyGoal.value = false
+      }
       
-      // 清空工作事项，只保留一个空行
-      workItems.value = [{
-        key: Date.now().toString(),
-        report_id: 0,
-        project_id: '',
-        project_name: '',
-        task_id: '',
-        task_name: '',
-        work_content: '',
-        start_time: '',
-        end_time: '',
-        startTime: '',
-        endTime: '',
-        hours_spent: 0,
-        progress_status: '正常',
-        progress_percentage: 0,
-        result: '',
-        measures: '',
-        evaluation: '',
-        content: '',
-        relatedTask: '',
-        relatedTaskFilter: '',
-        isAdded: true
-      }]
+      // 记录待处理的日期
+      pendingDate.value = date
+      
+      // 显示模式选择弹窗
+      modeSelectorVisible.value = true
       
       ElMessage({
-        message: `${date}暂无日报，开始新建`,
+        message: `${date}暂无日报，请选择填报模式`,
         type: 'info',
         duration: 3000
       })
@@ -1182,6 +1178,96 @@ const checkUnsavedContent = () => {
   }
   
   return false
+}
+
+// ========== 模式选择相关函数 ==========
+
+// 处理模式选择
+const handleModeSelect = (mode: 'free' | 'goal') => {
+  console.log('选择模式:', mode, '日期:', pendingDate.value)
+  
+  // 关闭模式选择弹窗
+  modeSelectorVisible.value = false
+  
+  // 更新当前日期
+  if (pendingDate.value) {
+    selectedDate.value = pendingDate.value
+  }
+  
+  // 重置表单状态
+  reportId.value = 0
+  isEdit.value = false
+  isSaved.value = false
+  isReportSubmitted.value = false
+  
+  // 清空表单数据
+  reportForm.work_target = ''
+  reportForm.key_work_tracking = ''
+  reportForm.tomorrow_plan = ''
+  
+  // 清空工作事项，只保留一个空行
+  workItems.value = [{
+    key: Date.now().toString(),
+    report_id: 0,
+    project_id: '',
+    project_name: '',
+    task_id: '',
+    task_name: '',
+    work_content: '',
+    start_time: '',
+    end_time: '',
+    startTime: '',
+    endTime: '',
+    hours_spent: 0,
+    progress_status: '正常',
+    progress_percentage: 0,
+    result: '',
+    measures: '',
+    evaluation: '',
+    content: '',
+    relatedTask: '',
+    relatedTaskFilter: '',
+    isAdded: true
+  }]
+  
+  // 如果选择了关联目标模式，跳转到简版日报页面
+  if (mode === 'goal') {
+    router.push('/daily-report-goal/create')
+  }
+  // 如果选择了自由填报模式，已经在当前页面，只需重置表单即可
+  
+  ElMessage({
+    message: `已选择${mode === 'free' ? '自由填报' : '关联目标'}模式`,
+    type: 'success',
+    duration: 2000
+  })
+}
+
+// 处理模式选择取消
+const handleModeCancel = () => {
+  console.log('取消模式选择')
+  modeSelectorVisible.value = false
+  
+  // 如果没有待处理日期或当前日期已有日报，不做任何操作
+  if (!pendingDate.value) {
+    return
+  }
+  
+  // 恢复到原始日期（今天的日报）
+  const today = new Date().toISOString().split('T')[0]
+  selectedDate.value = today
+  
+  // 重新加载今天的日报（如果有）
+  handleDateChange(today)
+  
+  pendingDate.value = ''
+}
+
+// 处理跳转制定目标
+const handleCreateGoal = () => {
+  console.log('跳转制定目标')
+  modeSelectorVisible.value = false
+  router.push('/monthly-goals')
 }
 
 // 确认提交

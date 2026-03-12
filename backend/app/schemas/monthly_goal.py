@@ -10,9 +10,12 @@ class MonthlyGoalBase(BaseModel):
     """月度目标基础模型"""
     month: str = Field(..., description="月份 (格式: 2026-02)", max_length=7)
     title: str = Field(..., description="目标标题", max_length=500)
-    content: Optional[str] = Field(None, description="工作内容")
+    content: Optional[str] = Field(None, description="目标描述/内容", alias="description")
     status: Optional[str] = Field("draft", description="状态: draft/published/completed")
     progress_rate: Optional[Decimal] = Field(Decimal("0"), description="完成进度 0-100")
+    
+    class Config:
+        populate_by_name = True
 
 
 class MonthlyGoalCreate(MonthlyGoalBase):
@@ -73,11 +76,14 @@ class WeeklyGoalBase(BaseModel):
     """周目标基础模型"""
     week_number: int = Field(..., description="周次 (1-5)", ge=1, le=5)
     title: str = Field(..., description="周目标标题", max_length=500)
-    content: Optional[str] = Field(None, description="工作内容")
+    content: Optional[str] = Field(None, description="工作内容", alias="description")
     progress_rate: Optional[Decimal] = Field(Decimal("0"), description="完成进度 0-100")
     status: Optional[str] = Field("pending", description="状态: pending/in_progress/completed")
     start_date: Optional[date] = Field(None, description="周开始日期")
     end_date: Optional[date] = Field(None, description="周结束日期")
+    
+    class Config:
+        populate_by_name = True
 
 
 class WeeklyGoalCreate(WeeklyGoalBase):
